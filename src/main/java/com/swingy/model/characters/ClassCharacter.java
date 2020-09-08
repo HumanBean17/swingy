@@ -8,6 +8,9 @@ public abstract class ClassCharacter {
     protected Integer defense;
     protected Integer hitPoints;
 
+    private static Integer level = 1;
+    private static Integer experience = 0;
+
     public Integer getAttack() {
         return attack;
     }

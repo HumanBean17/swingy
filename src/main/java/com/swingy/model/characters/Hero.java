@@ -15,8 +15,6 @@ public class Hero {
 
     private ClassCharacter heroClass;
     private String heroName;
-    private static Integer level = 1;
-    private static Integer experience = 0;
 
     private Weapon weapon;
     private Armor armor;
