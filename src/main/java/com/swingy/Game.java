@@ -1,6 +1,6 @@
 package com.swingy;
 
-import com.swingy.model.Hero;
+import com.swingy.model.characters.Hero;
 
 import java.util.Scanner;
 
