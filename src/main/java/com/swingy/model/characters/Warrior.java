@@ -1,10 +1,8 @@
 package com.swingy.model.characters;
 
-import com.sun.jndi.ldap.Ber;
+public class Warrior extends ClassCharacter {
 
-public class Berserk extends ClassCharacter {
-
-    public Berserk() {
+    public Warrior() {
         setAttack(6);
         setDefense(1);
         setHitPoints(3);

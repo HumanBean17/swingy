@@ -1,28 +1,40 @@
 package com.swingy.gui;
 
-import com.swingy.model.characters.ClassCharacter;
+import com.swingy.model.characters.Hero;
 
 import java.util.Random;
 
 public class Map {
 
-    private Integer size;
+    private int size;
     private char[][] map;
 
-    public Integer getSize() {
+    private static Map thisMap = null;
+
+    public static Map getMap() {
+        if (thisMap == null)
+            thisMap = new Map();
+        return thisMap;
+    }
+
+    public void setMap(char[][] newMap) {
+        map = newMap;
+    }
+
+    public int getSize() {
         return size;
     }
 
-    public void setSize(Integer size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
-    public void createMap(ClassCharacter classCharacter) {
-        size = (classCharacter.getLevel() - 1) * 5 + 10 - (classCharacter.getLevel() % 2);
-        map = new char[size][size];
+    public void createMap(Hero hero) {
+        setSize((hero.getLevel() - 1) * 5 + 10 - (hero.getLevel() % 2));
+        setMap(new char[size][size]);
         generateMap();
-        classCharacter.setPosX(size / 2);
-        creature.setPosY(size / 2);
+        hero.getCoordinates().setX(size / 2);
+        hero.getCoordinates().setY(size / 2);
     }
 
     public void generateMap() {
@@ -33,6 +45,18 @@ public class Map {
                     map[i][j] = 'E';
                 else
                     map[i][j] = '.';
-        //checkEmptyMap();
+        checkEmptyMap();
+    }
+
+    public void checkEmptyMap() {
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                if (map[i][j] != '.')
+                    return;
+        generateMap();
+    }
+    
+    public char getMapCell(int i, int j) {
+        return map[i][j];
     }
 }

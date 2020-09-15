@@ -1,15 +1,14 @@
 package com.swingy.model.characters;
 
+import com.swingy.gui.Coordinates;
+
 public abstract class ClassCharacter {
 
     protected static Integer bankPoint = 10;
 
-    protected Integer attack;
-    protected Integer defense;
-    protected Integer hitPoints;
-
-    private static Integer level = 1;
-    private static Integer experience = 0;
+    protected Integer attack = 0;
+    protected Integer defense = 0;
+    protected Integer hitPoints = 0;
 
     public Integer getAttack() {
         return attack;

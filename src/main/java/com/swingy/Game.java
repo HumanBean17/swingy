@@ -1,5 +1,8 @@
 package com.swingy;
 
+import com.swingy.controller.MainController;
+import com.swingy.gui.Map;
+import com.swingy.view.ShellGui;
 import com.swingy.model.characters.Hero;
 
 import java.util.Scanner;
@@ -7,33 +10,29 @@ import java.util.Scanner;
 public class Game {
 
     private static final Scanner scanner = new Scanner(System.in);
+    private ShellGui gui;
 
     public Hero hero;
+    public Map map;
 
-    private int pickGameMode() {
-        while (true) {
-            System.out.print("[1] CONSOLE\n[2] GUI\n> ");
-            int userInput = Integer.parseInt(scanner.next());
-            if (userInput == 1 || userInput == 2) {
-                return userInput;
-            }
-        }
-    }
-
-    private int pickHero() {
-        while (true) {
-            System.out.print("[1] CREATE HERO\n[2] SELECT CREATED HERO\n> ");
-            int userInput = Integer.parseInt(scanner.next());
-            if (userInput == 1 || userInput == 2) {
-                return userInput;
+    public void gameCycle() {
+        map.createMap(hero);
+        while (hero.isAlive()) {
+//            map.createMap(hero);
+            gui.drawMap();
+            if (!MainController.pickMovement(hero)) {
+                break;
             }
         }
     }
 
     public void run() {
-        pickGameMode();
-        if (pickHero() == 1) {
-            hero = new Hero();
+        MainController.pickGameMode();
+        if (MainController.pickHero() == 1) {
+            this.gui = ShellGui.createShellGui();
+            hero = Hero.createHero();
+            map = Map.getMap();
+            gameCycle();
         }
     }
 }

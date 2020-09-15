@@ -1,5 +1,8 @@
 package com.swingy.model.characters;
 
+import com.swingy.controller.MainController;
+import com.swingy.gui.Coordinates;
+import com.swingy.gui.Map;
 import com.swingy.model.armor.LightArmor;
 import com.swingy.model.helm.LightHelm;
 import com.swingy.model.weapon.Claymore;
@@ -7,21 +10,41 @@ import com.swingy.model.weapon.Weapon;
 import com.swingy.model.armor.Armor;
 import com.swingy.model.helm.Helm;
 
-import java.util.Scanner;
-
 public class Hero {
 
-    private static final Scanner scanner = new Scanner(System.in);
-
-    private ClassCharacter heroClass;
-    private String heroName;
+    private ClassCharacter classCharacter;
+    private static String heroName;
 
     private Weapon weapon;
     private Armor armor;
     private Helm helm;
 
+    private boolean isAlive = true;
+
+    private Integer level = 1;
+    private Integer experience = 0;
+
+    private Coordinates coordinates;
+
+    private static Hero hero;
+
+    public Hero() {
+        coordinates = new Coordinates();
+        pickClass();
+        pickName();
+    }
+
+    public static Hero createHero() {
+        hero = new Hero();
+        return hero;
+    }
+
+    public static Hero getHero() {
+        return hero;
+    }
+
     private void createBerserk() {
-        heroClass = new Berserk();
+        classCharacter = new Warrior();
         weapon = new Claymore();
         armor = new LightArmor();
         helm = new LightHelm();
@@ -35,30 +58,66 @@ public class Hero {
 
     }
 
-    private void pickName() {
-        System.out.print("What's your name, stranger?\n> ");
-        heroName = scanner.next();
-        System.out.println("Hi," + heroName);
+    public void pickName() {
+        MainController.pickName();
     }
 
-    private int pickClass() {
-        while (true) {
-            System.out.print("[1] BERSERK\n[2] WIZARD\n[3] ARCHER\n> ");
-            int userInput = Integer.parseInt(scanner.next());
-            if (userInput == 1) {
-                return userInput;
-            } else if (userInput == 2) {
-                //heroClass = HeroClass.WIZARD;
-                return userInput;
-            } else if (userInput == 3) {
-                //heroClass = HeroClass.ARCHER;
-                return userInput;
-            }
+    public void pickClass() {
+        String chosenClass = MainController.pickClass();
+        if (chosenClass.equals("WARRIOR")) {
+            createBerserk();
+        } else if (chosenClass.equals("WIZARD")) {
+            createWizard();
+        } else if (chosenClass.equals("ARCHER")) {
+            createArcher();
         }
     }
 
-    public Hero() {
-        pickClass();
-        pickName();
+    public Integer getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void moveRight() {
+        coordinates.incX();
+    }
+
+    public void moveLeft() {
+        coordinates.decX();
+    }
+
+    public void moveUp() {
+        coordinates.incY();
+    }
+
+    public void moveDown() {
+        coordinates.decY();
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setDead() {
+        isAlive = false;
     }
 }
