@@ -2,7 +2,6 @@ package com.swingy.model.characters;
 
 import com.swingy.controller.MainController;
 import com.swingy.gui.Coordinates;
-import com.swingy.gui.Map;
 import com.swingy.model.armor.LightArmor;
 import com.swingy.model.helm.LightHelm;
 import com.swingy.model.weapon.Claymore;
@@ -10,21 +9,9 @@ import com.swingy.model.weapon.Weapon;
 import com.swingy.model.armor.Armor;
 import com.swingy.model.helm.Helm;
 
-public class Hero {
+public class Hero extends Character {
 
-    private ClassCharacter classCharacter;
-    private static String heroName;
-
-    private Weapon weapon;
-    private Armor armor;
-    private Helm helm;
-
-    private boolean isAlive = true;
-
-    private Integer level = 1;
     private Integer experience = 0;
-
-    private Coordinates coordinates;
 
     private static Hero hero;
 
@@ -44,7 +31,7 @@ public class Hero {
     }
 
     private void createBerserk() {
-        classCharacter = new Warrior();
+        character = new Warrior(this);
         weapon = new Claymore();
         armor = new LightArmor();
         helm = new LightHelm();
@@ -81,43 +68,4 @@ public class Hero {
         this.experience = experience;
     }
 
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public void moveRight() {
-        coordinates.incX();
-    }
-
-    public void moveLeft() {
-        coordinates.decX();
-    }
-
-    public void moveUp() {
-        coordinates.incY();
-    }
-
-    public void moveDown() {
-        coordinates.decY();
-    }
-
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setDead() {
-        isAlive = false;
-    }
 }

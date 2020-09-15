@@ -1,10 +1,14 @@
 package com.swingy;
 
 import com.swingy.controller.MainController;
+import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
+import com.swingy.model.characters.Villain;
 import com.swingy.view.ShellGui;
 import com.swingy.model.characters.Hero;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Game {
@@ -14,6 +18,11 @@ public class Game {
 
     public Hero hero;
     public Map map;
+    public static List<Villain> enemies = new LinkedList<Villain>();
+
+    public static void createVillain(Coordinates coordinates) {
+        enemies.add(new Villain());
+    }
 
     public void gameCycle() {
         map.createMap(hero);

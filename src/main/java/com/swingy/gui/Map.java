@@ -1,5 +1,6 @@
 package com.swingy.gui;
 
+import com.swingy.Game;
 import com.swingy.model.characters.Hero;
 
 import java.util.Random;
@@ -41,8 +42,10 @@ public class Map {
         Random random = new Random();
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
-                if (random.nextInt(size * 5) == 0 && i != size / 2 && j != size / 2)
+                if (random.nextInt(size * 5) == 0 && i != size / 2 && j != size / 2) {
                     map[i][j] = 'E';
+                    Game.createVillain(new Coordinates(i, j));
+                }
                 else
                     map[i][j] = '.';
         checkEmptyMap();

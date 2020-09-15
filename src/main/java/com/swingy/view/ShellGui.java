@@ -1,7 +1,6 @@
 package com.swingy.view;
 
 import com.swingy.gui.Map;
-import com.swingy.model.characters.ClassCharacter;
 import com.swingy.model.characters.Hero;
 
 public class ShellGui implements Gui {

@@ -2,8 +2,18 @@ package com.swingy.gui;
 
 public class Coordinates {
 
-    private Integer x;
-    private Integer y;
+    private int x;
+    private int y;
+
+    public Coordinates(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Coordinates() {
+        x = 0;
+        y = 0;
+    }
 
     public void incX() {
         x += 1;
@@ -29,7 +39,7 @@ public class Coordinates {
         this.x = x;
     }
 
-    public Integer getY() {
+    public int getY() {
         return y;
     }
 
