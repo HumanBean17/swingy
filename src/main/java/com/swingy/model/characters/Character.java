@@ -15,6 +15,9 @@ public abstract class Character {
     protected Integer defense = 0;
     protected Integer hitPoints = 0;
 
+    protected Integer maxHp = 0;
+    protected Integer hp = 0;
+
     private CharacterClass character;
     private static String heroName;
 
@@ -22,9 +25,29 @@ public abstract class Character {
     private Armor armor;
     private Helm helm;
 
-    private Integer level = 1;
+    private Integer level = 0;
 
     private boolean isAlive = true;
+
+    public void increaseLevel() {
+        this.level++;
+    }
+
+    public Integer getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(Integer maxHp) {
+        this.maxHp = maxHp;
+    }
+
+    public Integer getHp() {
+        return hp;
+    }
+
+    public void setHp(Integer hp) {
+        this.hp = hp;
+    }
 
     public Integer getAttack() {
         return attack;

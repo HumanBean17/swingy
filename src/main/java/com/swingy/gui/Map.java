@@ -30,7 +30,8 @@ public class Map {
         this.size = size;
     }
 
-    public void createMap(Hero hero) {
+    public void createMap() {
+        Hero hero = Hero.getHero();
         setSize((hero.getLevel() - 1) * 5 + 10 - (hero.getLevel() % 2));
         setMap(new char[size][size]);
         generateMap();
@@ -57,6 +58,10 @@ public class Map {
                 if (map[i][j] != '.')
                     return;
         generateMap();
+    }
+
+    public void nextLevelMap() {
+        createMap();
     }
     
     public char getMapCell(int i, int j) {

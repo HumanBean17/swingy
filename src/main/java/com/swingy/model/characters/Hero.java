@@ -17,8 +17,6 @@ public class Hero extends Character {
 
     public Hero() {
         coordinates = new Coordinates();
-        pickClass();
-        pickName();
     }
 
     public static Hero createHero() {
@@ -31,6 +29,8 @@ public class Hero extends Character {
     }
 
     private void createBerserk() {
+        hero.maxHp = 105;
+        hero.hp = 105;
         CharacterClass character = new Warrior(this);
         Weapon weapon = new Claymore();
         Armor armor = new LightArmor();

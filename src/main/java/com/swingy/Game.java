@@ -18,7 +18,6 @@ public class Game {
     private static final Scanner scanner = new Scanner(System.in);
     private ShellGui gui;
 
-    private Hero hero;
     private Map map;
     private static List<Villain> enemies = new LinkedList<>();
 
@@ -27,14 +26,15 @@ public class Game {
     }
 
     public void gameCycle() {
-        map.createMap(hero);
+        map.createMap();
         MoveDirection direction;
         ActionOnMove action;
-        while (hero.isAlive()) {
-            //if (checkActionOnHeroPos().equals(ActionOnMove.EMPTY_CELL))
+        while (Hero.getHero().isAlive()) {
             gui.writeMap();
-            direction = MainController.pickMovement(hero);
-            checkActionOnHeroPos(direction);
+            direction = MainController.pickMovement(Hero.getHero()); // border
+            Hero.getHero().setExperience(1200);
+            checkFight();
+            checkNextLevel();
         }
     }
 
@@ -42,41 +42,35 @@ public class Game {
         MainController.pickGameMode();
         if (MainController.pickHero() == 1) {
             this.gui = ShellGui.createShellGui();
-            hero = Hero.createHero();
+            Hero.createHero();
+            Hero.getHero().pickClass();
+            Hero.getHero().pickName();
             map = Map.getMap();
             gameCycle();
         }
     }
 
-    public ActionOnMove checkActionOnHeroPos(MoveDirection direction) {
+    public ActionOnMove checkFight() {
         List<Villain> villains = Game.getEnemies();
         ActionOnMove action = ActionOnMove.EMPTY_CELL;
-//        int heroX = Hero.getHero().getCoordinates().getX();
-//        int heroY = Hero.getHero().getCoordinates().getY();
-//        int mapSize = Map.getMap().getSize();
-//        if (Hero.getHero().getCoordinates().getX() >= Map.getMap().getSize() ||
-//                Hero.getHero().getCoordinates().getX() <= 0 ||
-//                Hero.getHero().getCoordinates().getY() >= Map.getMap().getSize() ||
-//                Hero.getHero().getCoordinates().getY() <= 0) {
-//            action = ActionOnMove.NEXT_LEVEL;
-//            System.out.println("ACTION ON NEXT LVL");
-//        }
-        if (direction.equals(MoveDirection.BORDER)) {
-            checkNextLevel();
-        } else {
-            for (Villain villain : villains) {
-                if (villain.getCoordinates().getX().equals(Hero.getHero().getCoordinates().getX()) &&
-                        villain.getCoordinates().getY().equals(Hero.getHero().getCoordinates().getY())) {
-                    action = ActionOnMove.VILLAIN;
-                    System.out.println("ACTION ON VILLAIN");
-                }
+        for (Villain villain : villains) {
+            if (villain.getCoordinates().getX().equals(Hero.getHero().getCoordinates().getX()) &&
+                    villain.getCoordinates().getY().equals(Hero.getHero().getCoordinates().getY())) {
+                action = ActionOnMove.VILLAIN;
+                System.out.println("ACTION ON VILLAIN");
             }
         }
         return action;
     }
 
     public void checkNextLevel() {
-
+        if (Hero.getHero().getExperience() >= ((Hero.getHero().getLevel() + 1) * 1000) +
+                (int)Math.pow(Hero.getHero().getLevel(), 2) * 450) {
+            Hero.getHero().increaseLevel();
+            Hero.getHero().setMaxHp(Hero.getHero().getLevel() * 50 + 100);
+            Hero.getHero().setHp(Hero.getHero().getMaxHp());
+            map.nextLevelMap();
+        }
     }
 
     public static List<Villain> getEnemies() {
@@ -85,10 +79,6 @@ public class Game {
 
     public Map getMap() {
         return map;
-    }
-
-    public Hero getHero() {
-        return hero;
     }
 
     public ShellGui getGui() {
