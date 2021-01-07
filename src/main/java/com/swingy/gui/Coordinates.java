@@ -39,7 +39,7 @@ public class Coordinates {
         this.x = x;
     }
 
-    public int getY() {
+    public Integer getY() {
         return y;
     }
 

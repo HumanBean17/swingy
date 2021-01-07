@@ -1,5 +1,7 @@
 package com.swingy.view;
 
+import com.swingy.Game;
+import com.swingy.controller.ActionOnMove;
 import com.swingy.gui.Map;
 import com.swingy.model.characters.Hero;
 
@@ -20,7 +22,7 @@ public class ShellGui implements Gui {
 
     }
 
-    public void drawMap() {
+    public void writeMap() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
         System.out.print("┍");
@@ -30,8 +32,10 @@ public class ShellGui implements Gui {
         for (int i = 0; i < Map.getMap().getSize(); ++i) {
             System.out.print("│");
             for (int j = 0; j < Map.getMap().getSize(); ++j) {
-                if (Hero.getHero().getCoordinates().getX() == j && Hero.getHero().getCoordinates().getY() == i)
-                    System.out.print("P ");
+                if (Hero.getHero().getCoordinates().getY() == i &&
+                        Hero.getHero().getCoordinates().getX() == j) {
+                        System.out.print("H ");
+                }
                 else
                     System.out.print(Map.getMap().getMapCell(i, j) + " ");
             }
@@ -41,6 +45,6 @@ public class ShellGui implements Gui {
         for (int i = 0; i < Map.getMap().getSize() * 2; ++i)
             System.out.print("━");
         System.out.println("┙");
-        System.out.println("Type commands to move: 'right/R', 'left/L', 'up/U', 'down/D'.");
+        System.out.println("Where to move? : 'east/E', 'west/W', 'north/N', 'south/S'.");
     }
 }

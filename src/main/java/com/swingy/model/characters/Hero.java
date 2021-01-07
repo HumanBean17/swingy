@@ -31,10 +31,10 @@ public class Hero extends Character {
     }
 
     private void createBerserk() {
-        character = new Warrior(this);
-        weapon = new Claymore();
-        armor = new LightArmor();
-        helm = new LightHelm();
+        CharacterClass character = new Warrior(this);
+        Weapon weapon = new Claymore();
+        Armor armor = new LightArmor();
+        Helm helm = new LightHelm();
     }
 
     private void createWizard() {

@@ -10,22 +10,31 @@ public class MainController {
 
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static boolean pickMovement(Hero hero) {
+    public static MoveDirection pickMovement(Hero hero) {
         System.out.print("> ");
-        String userInput = scanner.next();
+        String userInput = scanner.next().toLowerCase();
         System.out.println(hero.getCoordinates().getX() + " " + Map.getMap().getSize());
-        if (userInput.toLowerCase().equals("right") && ((hero.getCoordinates().getX() + 1) < Map.getMap().getSize())) {
+        MoveDirection direction = null;
+        if ((userInput.equals("east") ||
+                userInput.equals("e")) && ((hero.getCoordinates().getX() + 1) < Map.getMap().getSize())) {
             hero.moveRight();
-        } else if (userInput.toLowerCase().equals("left") && ((hero.getCoordinates().getX() - 1) > 0)) {
+            direction = MoveDirection.EAST;
+        } else if ((userInput.equals("west") ||
+                userInput.equals("w")) && ((hero.getCoordinates().getX() - 1) >= 0)) {
             hero.moveLeft();
-        } else if (userInput.toLowerCase().equals("up") && ((hero.getCoordinates().getY() + 1) < Map.getMap().getSize())) {
+            direction = MoveDirection.WEST;
+        } else if ((userInput.equals("north") ||
+                userInput.equals("n")) && ((hero.getCoordinates().getY() - 1) >= 0)) {
             hero.moveUp();
-        } else if (userInput.toLowerCase().equals("down") && ((hero.getCoordinates().getY() - 1) > 0)) {
+            direction = MoveDirection.NORTH;
+        } else if ((userInput.equals("south") ||
+                userInput.equals("s")) && ((hero.getCoordinates().getY() + 1) < Map.getMap().getSize())) {
             hero.moveDown();
+            direction = MoveDirection.SOUTH;
         } else {
-            return false;
+            direction = MoveDirection.BORDER;
         }
-        return true;
+        return direction;
     }
 
     public static int pickGameMode() {

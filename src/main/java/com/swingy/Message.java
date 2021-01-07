@@ -1,7 +1,5 @@
 package com.swingy;
 
-import com.sun.xml.internal.fastinfoset.util.CharArray;
-
 public class Message {
 
     public static void print(String s) {
