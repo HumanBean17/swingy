@@ -45,6 +45,5 @@ public class ShellGui implements Gui {
         for (int i = 0; i < Map.getMap().getSize() * 2; ++i)
             System.out.print("━");
         System.out.println("┙");
-        System.out.println("Where to move? : 'east/E', 'west/W', 'north/N', 'south/S'.");
     }
 }

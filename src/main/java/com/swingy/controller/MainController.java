@@ -2,6 +2,7 @@ package com.swingy.controller;
 
 import com.swingy.gui.Map;
 import com.swingy.model.characters.Hero;
+import com.swingy.model.characters.Villain;
 import com.swingy.view.ShellGui;
 
 import java.util.Scanner;
@@ -10,11 +11,31 @@ public class MainController {
 
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static MoveDirection pickMovement(Hero hero) {
+    public static void battleHandler(Villain villain) {
+        System.out.println("You've met a villain. What are you going to do?");
+        System.out.print("[1] FIGHT\n[2] RUN\n");
+        System.out.print("> ");
+        int userInput = Integer.parseInt(scanner.next().toLowerCase());
+        boolean isHeroWon = true;
+        if (userInput == 1) {
+            isHeroWon = Battle.startBattle(villain);
+        } else if (userInput == 2) {
+
+        } else {
+            ShellGui.error();
+        }
+        if (!isHeroWon) {
+            System.out.println("You died. Game over on level " + Hero.getHero().getLevel());
+        }
+    }
+
+    public static MoveDirection pickMovement() {
+        Hero hero = Hero.getHero();
+        System.out.println("Where to move? : 'east/E', 'west/W', 'north/N', 'south/S', 'info'");
         System.out.print("> ");
         String userInput = scanner.next().toLowerCase();
         System.out.println(hero.getCoordinates().getX() + " " + Map.getMap().getSize());
-        MoveDirection direction = null;
+        MoveDirection direction = MoveDirection.BORDER;
         if ((userInput.equals("east") ||
                 userInput.equals("e")) && ((hero.getCoordinates().getX() + 1) < Map.getMap().getSize())) {
             hero.moveRight();
@@ -31,8 +52,8 @@ public class MainController {
                 userInput.equals("s")) && ((hero.getCoordinates().getY() + 1) < Map.getMap().getSize())) {
             hero.moveDown();
             direction = MoveDirection.SOUTH;
-        } else {
-            direction = MoveDirection.BORDER;
+        } else if (userInput.equals("info")) {
+
         }
         return direction;
     }
@@ -67,7 +88,9 @@ public class MainController {
     public static String pickClass() {
         while (true) {
             ShellGui.pickClass();
-            System.out.print("[1] WARRIOR\n[2] WIZARD\n[3] ARCHER\n> ");
+            System.out.print("[1] WARRIOR(chance of critical damage)\n" +
+                    "[2] WIZARD(chance of freeze enemy)\n" +
+                    "[3] ARCHER(chance of miss, but enemy skips first move)\n> ");
             int userInput = Integer.parseInt(scanner.next());
             if (userInput == 1) {
                 return "WARRIOR";

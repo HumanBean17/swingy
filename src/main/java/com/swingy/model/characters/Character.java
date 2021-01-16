@@ -5,6 +5,9 @@ import com.swingy.model.armor.Armor;
 import com.swingy.model.helm.Helm;
 import com.swingy.model.weapon.Weapon;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public abstract class Character {
 
     protected static Integer bankPoint = 10;
@@ -18,16 +21,38 @@ public abstract class Character {
     protected Integer maxHp = 0;
     protected Integer hp = 0;
 
-    private CharacterClass character;
-    private static String heroName;
+    protected Integer mana = 0;
 
-    private Weapon weapon;
-    private Armor armor;
-    private Helm helm;
+    protected CharacterClass characterClass;
 
-    private Integer level = 0;
+    protected String name;
 
-    private boolean isAlive = true;
+    protected Weapon weapon;
+    protected Armor armor;
+    protected Helm helm;
+
+    protected Integer level = 0;
+
+    protected boolean isAlive = true;
+
+    public Integer attack(Character enemy) {
+        Integer damage = this.attack + (this.hitPoints > 0 ? new Random().nextInt(this.hitPoints) : 0);
+        System.out.println(this.characterClass.getClassName() + " " + this.name + " attacks " +
+                enemy.getCharacterClass().getClassName() + " " + enemy.getName() + " with damage " + damage);
+        enemy.takeDamage(this, damage);
+        return damage;
+    }
+
+    public Integer takeDamage(Character enemy, Integer damage) {
+        int takenDamage = Math.max(damage - this.defense, 0);
+        this.hp -= takenDamage;
+        System.out.println(this.characterClass.getClassName() + " " + this.name + " takes damage " +
+                takenDamage + " and has " + this.hp + " health points");
+        if (this.hp > 0 && new Random().nextInt(this.hp) % 12 == 0) {
+            enemy.takeDamage(this, new Random().nextInt((this.attack / 5) + 1));
+        }
+        return takenDamage;
+    }
 
     public void increaseLevel() {
         this.level++;
@@ -115,5 +140,66 @@ public abstract class Character {
     public void setLevel(Integer level) {
         this.level = level;
     }
+
+    public Integer getMana() {
+        return mana;
+    }
+
+    public void setMana(Integer mana) {
+        this.mana = mana;
+    }
+
+    public static Integer getBankPoint() {
+        return bankPoint;
+    }
+
+    public static void setBankPoint(Integer bankPoint) {
+        Character.bankPoint = bankPoint;
+    }
+
+    public CharacterClass getCharacterClass() {
+        return characterClass;
+    }
+
+    public void setCharacterClass(CharacterClass characterClass) {
+        this.characterClass = characterClass;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+    }
+
+    public Armor getArmor() {
+        return armor;
+    }
+
+    public void setArmor(Armor armor) {
+        this.armor = armor;
+    }
+
+    public Helm getHelm() {
+        return helm;
+    }
+
+    public void setHelm(Helm helm) {
+        this.helm = helm;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+
 
 }

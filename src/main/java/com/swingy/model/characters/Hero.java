@@ -16,6 +16,7 @@ public class Hero extends Character {
     private static Hero hero;
 
     public Hero() {
+        super();
         coordinates = new Coordinates();
     }
 
@@ -24,17 +25,16 @@ public class Hero extends Character {
         return hero;
     }
 
-    public static Hero getHero() {
-        return hero;
-    }
-
     private void createBerserk() {
         hero.maxHp = 105;
         hero.hp = 105;
-        CharacterClass character = new Warrior(this);
-        Weapon weapon = new Claymore();
-        Armor armor = new LightArmor();
-        Helm helm = new LightHelm();
+        this.characterClass = new Warrior();
+        this.weapon = new Claymore();
+        this.attack = this.weapon.getAttack();
+        this.armor = new LightArmor();
+        this.defense = this.armor.getDefense();
+        this.helm = new LightHelm();
+        this.hitPoints = this.helm.getHitPoints();
     }
 
     private void createWizard() {
@@ -46,7 +46,7 @@ public class Hero extends Character {
     }
 
     public void pickName() {
-        MainController.pickName();
+        this.name = MainController.pickName();
     }
 
     public void pickClass() {
@@ -60,8 +60,16 @@ public class Hero extends Character {
         }
     }
 
+    public static Hero getHero() {
+        return hero;
+    }
+
     public Integer getExperience() {
         return experience;
+    }
+
+    public void addExperience(Integer experience) {
+        this.experience += experience;
     }
 
     public void setExperience(Integer experience) {

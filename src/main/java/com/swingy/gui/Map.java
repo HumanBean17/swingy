@@ -45,7 +45,7 @@ public class Map {
             for (int j = 0; j < size; j++)
                 if (random.nextInt(size * 5) == 0 && i != size / 2 && j != size / 2) { // TODO переделать
                     map[i][j] = 'E';
-                    Game.createVillain(new Coordinates(i, j));
+                    Game.createVillain(new Coordinates(j, i));
                 }
                 else
                     map[i][j] = '.';

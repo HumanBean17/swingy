@@ -1,10 +1,19 @@
 package com.swingy.model.characters;
 
-public class Warrior extends CharacterClass {
+public class Warrior implements CharacterClass {
 
-    public Warrior(Character character) {
-        character.setAttack(6);
-        character.setDefense(1);
-        character.setHitPoints(3);
+    private final static String className = "WARRIOR";
+
+    @Override
+    public Talent specialTalent(Character character) {
+        if (character.getMana() % 3 == 0) {
+            return Talent.CRITICAL_DAMAGE;
+        }
+        return null;
+    }
+
+    @Override
+    public String getClassName() {
+        return className;
     }
 }

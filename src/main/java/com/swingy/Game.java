@@ -29,11 +29,14 @@ public class Game {
         map.createMap();
         MoveDirection direction;
         ActionOnMove action;
+        Villain villain = null;
         while (Hero.getHero().isAlive()) {
             gui.writeMap();
-            direction = MainController.pickMovement(Hero.getHero()); // border
-            Hero.getHero().setExperience(1200);
-            checkFight();
+            direction = MainController.pickMovement();
+            villain = checkBattle();
+            if (villain != null) {
+                MainController.battleHandler(villain);
+            }
             checkNextLevel();
         }
     }
@@ -50,26 +53,27 @@ public class Game {
         }
     }
 
-    public ActionOnMove checkFight() {
+    public Villain checkBattle() {
         List<Villain> villains = Game.getEnemies();
-        ActionOnMove action = ActionOnMove.EMPTY_CELL;
+        Villain result = null;
         for (Villain villain : villains) {
             if (villain.getCoordinates().getX().equals(Hero.getHero().getCoordinates().getX()) &&
                     villain.getCoordinates().getY().equals(Hero.getHero().getCoordinates().getY())) {
-                action = ActionOnMove.VILLAIN;
-                System.out.println("ACTION ON VILLAIN");
+                result = villain;
+                break;
             }
         }
-        return action;
+        return result;
     }
 
-    public void checkNextLevel() {
+    public static void checkNextLevel() {
         if (Hero.getHero().getExperience() >= ((Hero.getHero().getLevel() + 1) * 1000) +
                 (int)Math.pow(Hero.getHero().getLevel(), 2) * 450) {
+            System.out.println("Level up! You're now level " + Hero.getHero().getLevel() + 1);
             Hero.getHero().increaseLevel();
             Hero.getHero().setMaxHp(Hero.getHero().getLevel() * 50 + 100);
             Hero.getHero().setHp(Hero.getHero().getMaxHp());
-            map.nextLevelMap();
+            Map.getMap().nextLevelMap();
         }
     }
 
