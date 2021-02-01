@@ -34,4 +34,14 @@ public class Battle {
         return isHeroWon;
     }
 
+    public static boolean run() {
+        boolean isRun = true;
+        if (new Random().nextInt(2) != 0) {
+            Hero.getHero().setCoordinates(Game.getHeroLastPos());
+        } else {
+            isRun = false;
+        }
+        return isRun;
+    }
+
 }

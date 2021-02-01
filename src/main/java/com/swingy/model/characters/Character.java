@@ -33,8 +33,6 @@ public abstract class Character {
 
     protected Integer level = 0;
 
-    protected boolean isAlive = true;
-
     public Integer attack(Character enemy) {
         Integer damage = this.attack + (this.hitPoints > 0 ? new Random().nextInt(this.hitPoints) : 0);
         System.out.println(this.characterClass.getClassName() + " " + this.name + " attacks " +
@@ -48,9 +46,9 @@ public abstract class Character {
         this.hp -= takenDamage;
         System.out.println(this.characterClass.getClassName() + " " + this.name + " takes damage " +
                 takenDamage + " and has " + this.hp + " health points");
-        if (this.hp > 0 && new Random().nextInt(this.hp) % 12 == 0) {
+        /*if (this.hp > 0 && new Random().nextInt(this.hp) % 12 == 0) {
             enemy.takeDamage(this, new Random().nextInt((this.attack / 5) + 1));
-        }
+        }*/
         return takenDamage;
     }
 
@@ -126,11 +124,7 @@ public abstract class Character {
     }
 
     public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setDead() {
-        isAlive = false;
+        return hp > 0;
     }
 
     public Integer getLevel() {
@@ -179,6 +173,7 @@ public abstract class Character {
 
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
+        this.attack = this.weapon.getAttack();
     }
 
     public Armor getArmor() {
@@ -187,6 +182,7 @@ public abstract class Character {
 
     public void setArmor(Armor armor) {
         this.armor = armor;
+        this.defense = this.armor.getDefense();
     }
 
     public Helm getHelm() {
@@ -195,11 +191,7 @@ public abstract class Character {
 
     public void setHelm(Helm helm) {
         this.helm = helm;
+        this.hitPoints = this.helm.getHitPoints();
     }
-
-    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }
-
 
 }

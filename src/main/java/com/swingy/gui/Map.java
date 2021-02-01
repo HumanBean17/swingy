@@ -12,6 +12,50 @@ public class Map {
 
     private static Map thisMap = null;
 
+    public void generateMap() {
+        Random random = new Random();
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                if (j != size / 2 && i != size / 2
+                        && random.nextInt(size * 5) == 0) {
+                    map[i][j] = 'V';
+                    Game.createVillain(new Coordinates(j, i));
+                }
+                else
+                    map[i][j] = '.';
+        checkIsMapEmpty();
+    }
+
+    public void checkIsMapEmpty() {
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                if (map[i][j] != '.')
+                    return;
+        generateMap();
+    }
+
+    public void createMap() {
+        Hero hero = Hero.getHero();
+        setSize((hero.getLevel() - 1) * 5 + 10 - (hero.getLevel() % 2));
+        setMap(new char[size][size]);
+        generateMap();
+        resetHeroPos(hero);
+    }
+
+    public void resetHeroPos(Hero hero) {
+        hero.getCoordinates().setX(size / 2);
+        hero.getCoordinates().setY(size / 2);
+    }
+
+
+    public void nextLevelMap() {
+        createMap();
+    }
+    
+    public char getMapCell(int i, int j) {
+        return map[i][j];
+    }
+
     public static Map getMap() {
         if (thisMap == null)
             thisMap = new Map();
@@ -28,43 +72,5 @@ public class Map {
 
     public void setSize(int size) {
         this.size = size;
-    }
-
-    public void createMap() {
-        Hero hero = Hero.getHero();
-        setSize((hero.getLevel() - 1) * 5 + 10 - (hero.getLevel() % 2));
-        setMap(new char[size][size]);
-        generateMap();
-        hero.getCoordinates().setX(size / 2);
-        hero.getCoordinates().setY(size / 2);
-    }
-
-    public void generateMap() {
-        Random random = new Random();
-        for (int i = 0; i < size; i++)
-            for (int j = 0; j < size; j++)
-                if (random.nextInt(size * 5) == 0 && i != size / 2 && j != size / 2) { // TODO переделать
-                    map[i][j] = 'E';
-                    Game.createVillain(new Coordinates(j, i));
-                }
-                else
-                    map[i][j] = '.';
-        checkIsMapEmpty();
-    }
-
-    public void checkIsMapEmpty() {
-        for (int i = 0; i < size; i++)
-            for (int j = 0; j < size; j++)
-                if (map[i][j] != '.')
-                    return;
-        generateMap();
-    }
-
-    public void nextLevelMap() {
-        createMap();
-    }
-    
-    public char getMapCell(int i, int j) {
-        return map[i][j];
     }
 }

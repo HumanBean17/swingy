@@ -29,12 +29,9 @@ public class Hero extends Character {
         hero.maxHp = 105;
         hero.hp = 105;
         this.characterClass = new Warrior();
-        this.weapon = new Claymore();
-        this.attack = this.weapon.getAttack();
-        this.armor = new LightArmor();
-        this.defense = this.armor.getDefense();
-        this.helm = new LightHelm();
-        this.hitPoints = this.helm.getHitPoints();
+        setWeapon(new Claymore());
+        setArmor(new LightArmor());
+        setHelm(new LightHelm());
     }
 
     private void createWizard() {

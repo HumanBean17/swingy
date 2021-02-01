@@ -1,16 +1,14 @@
 package com.swingy.view;
 
-import com.swingy.Game;
-import com.swingy.controller.ActionOnMove;
 import com.swingy.gui.Map;
 import com.swingy.model.characters.Hero;
 
-public class ShellGui implements Gui {
+public class TermGui implements Gui {
 
-    public static ShellGui shell;
+    public static TermGui shell;
 
-    public static ShellGui createShellGui() {
-        shell = new ShellGui();
+    public static TermGui createShellGui() {
+        shell = new TermGui();
         return shell;
     }
 
@@ -23,8 +21,7 @@ public class ShellGui implements Gui {
     }
 
     public void writeMap() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        flush();
         System.out.print("┍");
         for (int i = 0; i < Map.getMap().getSize() * 2; ++i)
             System.out.print("━");
@@ -36,8 +33,9 @@ public class ShellGui implements Gui {
                         Hero.getHero().getCoordinates().getX() == j) {
                         System.out.print("H ");
                 }
-                else
+                else {
                     System.out.print(Map.getMap().getMapCell(i, j) + " ");
+                }
             }
             System.out.println("│");
         }
@@ -45,5 +43,10 @@ public class ShellGui implements Gui {
         for (int i = 0; i < Map.getMap().getSize() * 2; ++i)
             System.out.print("━");
         System.out.println("┙");
+    }
+
+    public static void flush() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 }
