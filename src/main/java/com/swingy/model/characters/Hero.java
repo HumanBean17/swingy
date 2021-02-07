@@ -5,9 +5,6 @@ import com.swingy.gui.Coordinates;
 import com.swingy.model.armor.LightArmor;
 import com.swingy.model.helm.LightHelm;
 import com.swingy.model.weapon.Claymore;
-import com.swingy.model.weapon.Weapon;
-import com.swingy.model.armor.Armor;
-import com.swingy.model.helm.Helm;
 
 public class Hero extends Character {
 
@@ -25,10 +22,14 @@ public class Hero extends Character {
         return hero;
     }
 
+    public static void deleteHero() {
+        hero = null;
+    }
+
     private void createBerserk() {
         hero.maxHp = 105;
         hero.hp = 105;
-        this.characterClass = new Warrior();
+        hero.characterClass = new Warrior();
         setWeapon(new Claymore());
         setArmor(new LightArmor());
         setHelm(new LightHelm());
@@ -47,12 +48,12 @@ public class Hero extends Character {
     }
 
     public void pickClass() {
-        String chosenClass = MainController.pickClass();
-        if (chosenClass.equals("WARRIOR")) {
+        GameClass chosenClass = MainController.pickClass();
+        if (chosenClass.equals(GameClass.WARRIOR)) {
             createBerserk();
-        } else if (chosenClass.equals("WIZARD")) {
+        } else if (chosenClass.equals(GameClass.WIZARD)) {
             createWizard();
-        } else if (chosenClass.equals("ARCHER")) {
+        } else if (chosenClass.equals(GameClass.ARCHER)) {
             createArcher();
         }
     }

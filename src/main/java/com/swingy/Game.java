@@ -31,31 +31,38 @@ public class Game {
         map.createMap();
         MoveDirection direction;
         ActionOnMove action;
-        Villain villain = null;
+        Villain villain;
         while (Hero.getHero().isAlive()) {
             gui.writeMap();
             direction = MainController.pickMovement();
             villain = checkBattle();
             if (villain != null) {
-                MainController.battleHandler(villain);
+                if (MainController.battleHandler(villain))
+                    enemies.remove(villain);
+                else
+                    Main.restartTheGame();
             }
             if (direction == MoveDirection.BORDER && checkNextLevel()) {
                 System.out.println("Level up! You're now level " + Hero.getHero().getLevel() + 1);
-                Hero.getHero().increaseLevel();
-                Hero.getHero().setMaxHp(Hero.getHero().getLevel() * 50 + 100);
-                Hero.getHero().setHp(Hero.getHero().getMaxHp());
-                Map.getMap().nextLevelMap();
+                if (Hero.getHero().getLevel() >= 7) {
+                    System.out.println("Congratulations! You've reached game level 7 and completed the game.");
+                    Main.restartTheGame();
+                } else {
+                    Hero.getHero().increaseLevel();
+                    Hero.getHero().setMaxHp(Hero.getHero().getLevel() * 50 + 100);
+                    Hero.getHero().setHp(Hero.getHero().getMaxHp());
+                    Map.getMap().nextLevelMap();
+                }
             } else if (direction == MoveDirection.BORDER) {
                 Map.getMap().resetHeroPos(Hero.getHero());
                 Map.getMap().generateMap();
             }
         }
-        run();
+        Main.restartTheGame();
     }
 
     public void run() {
-        MainController.pickGameMode();
-        if (MainController.pickHero() == 1) {
+        if (MainController.pickHero().equals(MainController.HeroPick.CREATE)) {
             this.gui = TermGui.createShellGui();
             Hero.createHero();
             Hero.getHero().pickClass();
@@ -80,11 +87,6 @@ public class Game {
     }
 
     public static boolean checkNextLevel() {
-        /*System.out.println("Level up! You're now level " + Hero.getHero().getLevel() + 1);
-            Hero.getHero().increaseLevel();
-            Hero.getHero().setMaxHp(Hero.getHero().getLevel() * 50 + 100);
-            Hero.getHero().setHp(Hero.getHero().getMaxHp());
-            Map.getMap().nextLevelMap();*/
         return Hero.getHero().getExperience() >= getNextLevelExperience();
     }
 

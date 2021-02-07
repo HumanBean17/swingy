@@ -5,5 +5,6 @@ public enum MoveDirection {
     SOUTH,
     WEST,
     EAST,
-    BORDER
+    BORDER,
+    NULL
 }

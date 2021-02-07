@@ -1,5 +1,6 @@
 package com.swingy.view;
 
+import com.swingy.Game;
 import com.swingy.gui.Map;
 import com.swingy.model.characters.Hero;
 
@@ -12,12 +13,65 @@ public class TermGui implements Gui {
         return shell;
     }
 
+    public static void startBattle() {
+        TermGui.flush();
+        System.out.println("You've met a villain. What are you going to do?");
+        System.out.print("[1] FIGHT\n[2] RUN\n");
+        System.out.print("> ");
+    }
+
+    public static void playerDied() {
+        System.out.println("You died. Game over on level " + Hero.getHero().getLevel());
+    }
+
+    public static void pickMovement() {
+        TermGui.flush();
+        System.out.println("Where to move? : 'right/R', 'left/L', 'up/U', 'down/D', 'info'");
+        System.out.print("> ");
+    }
+
+    public static void pickGameMode() {
+        TermGui.flush();
+        System.out.print("[1] CONSOLE\n[2] GUI\n> ");
+    }
+
+    public static void pickHero() {
+        TermGui.flush();
+        System.out.print("[1] CREATE HERO\n[2] SELECT CREATED HERO\n> ");
+    }
+
+    public static void pickName() {
+        TermGui.flush();
+        System.out.print("What's your name, stranger?\n> ");
+    }
+
+    public static void info(Hero hero) {
+        TermGui.flush();
+        System.out.format("name:                %s\n", hero.getName());
+        System.out.format("class:               %s\n", hero.getCharacterClass().getClassName());
+        System.out.format("health points:       %d/%d\n", hero.getHp(), Hero.getHero().getMaxHp());
+        System.out.format("level:               %d\n", hero.getLevel());
+        System.out.format("experience:          %d/%d\n", hero.getExperience(), Game.getNextLevelExperience());
+        System.out.format("attack:              %d\n", hero.getAttack());
+        System.out.format("defence:             %d\n", hero.getDefense());
+        System.out.format("hit points:          %d\n", hero.getHitPoints());
+        if (hero.getWeapon() != null)
+            System.out.format("weapon:          %s\n", hero.getWeapon().getName());
+        if (hero.getArmor() != null)
+            System.out.format("armor:           %s\n", hero.getArmor().getName());
+        if (hero.getHelm() != null)
+            System.out.format("helmet:          %s\n", hero.getHelm().getName());
+    }
+
     public static void error() {
 
     }
 
     public static void pickClass() {
-
+        TermGui.flush();
+        System.out.print("[1] WARRIOR(chance of critical damage)\n" +
+                "[2] WIZARD(chance of freeze enemy)\n" +
+                "[3] ARCHER(chance of miss, but enemy skips first move)\n> ");
     }
 
     public void writeMap() {
