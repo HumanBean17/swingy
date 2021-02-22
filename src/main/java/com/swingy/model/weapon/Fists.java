@@ -1,9 +1,9 @@
 package com.swingy.model.weapon;
 
-public class Claymore extends Weapon {
+public class Fists extends Weapon {
 
-    private Integer attack = 25;
-    private String name = "Claymore";
+    private Integer attack = 5;
+    private String name = "Fists";
 
     @Override
     public Integer getAttack() {

@@ -3,12 +3,14 @@ package com.swingy;
 import com.swingy.controller.ActionOnMove;
 import com.swingy.controller.MainController;
 import com.swingy.controller.MoveDirection;
+import com.swingy.db.GameDb;
 import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
 import com.swingy.model.characters.Villain;
 import com.swingy.view.TermGui;
 import com.swingy.model.characters.Hero;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -62,14 +64,17 @@ public class Game {
     }
 
     public void run() {
-        if (MainController.pickHero().equals(MainController.HeroPick.CREATE)) {
-            this.gui = TermGui.createShellGui();
-            Hero.createHero();
-            Hero.getHero().pickClass();
-            Hero.getHero().pickName();
+        MainController.HeroPick heroPick = MainController.pickHero();
+        this.gui = TermGui.createShellGui(); //TODO handle through
+        if (heroPick.equals(MainController.HeroPick.CREATE)) {
+            Hero hero = Hero.createHero();
+            if (!GameDb.createHero(hero))
+                Main.restartTheGame();
             heroLastPos = Hero.getHero().getCoordinates();
             map = Map.getMap();
             gameCycle();
+        } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
+            if (!GameDb.)
         }
     }
 
@@ -84,6 +89,17 @@ public class Game {
             }
         }
         return result;
+    }
+
+    public static boolean isVillain(Coordinates coordinates) {
+        List<Villain> villains = Game.getEnemies();
+        for (Villain villain : villains) {
+            if (villain.getCoordinates().getX().equals(coordinates.getX()) &&
+                    villain.getCoordinates().getY().equals(coordinates.getY())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean checkNextLevel() {

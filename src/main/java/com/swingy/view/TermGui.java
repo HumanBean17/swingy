@@ -1,6 +1,7 @@
 package com.swingy.view;
 
 import com.swingy.Game;
+import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
 import com.swingy.model.characters.Hero;
 

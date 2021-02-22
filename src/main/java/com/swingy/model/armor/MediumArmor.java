@@ -1,6 +1,15 @@
 package com.swingy.model.armor;
 
-import com.swingy.model.armor.Armor;
-
 public class MediumArmor extends Armor {
+
+    private Integer defense = 20;
+    private final String name = "Medium armor";
+
+    public Integer getDefense() {
+        return this.defense;
+    }
+
+    public void setDefense(Integer defense) {
+        this.defense = defense;
+    }
 }

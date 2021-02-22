@@ -4,35 +4,63 @@ import com.swingy.gui.Coordinates;
 import com.swingy.model.armor.Armor;
 import com.swingy.model.helm.Helm;
 import com.swingy.model.weapon.Weapon;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public abstract class Character {
 
-    protected static Integer bankPoint = 10;
+    @Id
+    @Column(name = "ID")
+    protected UUID id;
 
+    @Column(name = "COORDINATES")
     protected Coordinates coordinates;
 
+    @Column(name = "ATTACK")
     protected Integer attack = 0;
+    @Column(name = "DEFENSE")
     protected Integer defense = 0;
+    @Column(name = "HIT_POINTS")
     protected Integer hitPoints = 0;
 
+    @Column(name = "MAX_HP")
     protected Integer maxHp = 0;
+    @Column(name = "HP")
     protected Integer hp = 0;
 
+    @Column(name = "MANA")
     protected Integer mana = 0;
 
+    @Column(name = "CHARACTER_CLASS")
     protected CharacterClass characterClass;
 
+    @Column(name = "NAME")
     protected String name;
 
+    @Column(name = "WEAPON")
     protected Weapon weapon;
+    @Column(name = "ARMOR")
     protected Armor armor;
+    @Column(name = "HELM")
     protected Helm helm;
 
+    @Column(name = "LEVEL")
     protected Integer level = 0;
 
+    public Character() {
+        this.id = UUID.randomUUID();
+    }
+
+    // TODO: implement special talents
     public Integer attack(Character enemy) {
         Integer damage = this.attack + (this.hitPoints > 0 ? new Random().nextInt(this.hitPoints) : 0);
         System.out.println(this.characterClass.getClassName() + " " + this.name + " attacks " +
@@ -42,69 +70,17 @@ public abstract class Character {
     }
 
     public Integer takeDamage(Character enemy, Integer damage) {
-        int takenDamage = Math.max(damage - this.defense, 0);
+        int takenDamage = damage;
+        if (this.defense > 0)
+            takenDamage = Math.max(damage - new Random().nextInt(this.defense), 0);
         this.hp -= takenDamage;
         System.out.println(this.characterClass.getClassName() + " " + this.name + " takes damage " +
                 takenDamage + " and has " + this.hp + " health points");
-        /*if (this.hp > 0 && new Random().nextInt(this.hp) % 12 == 0) {
-            enemy.takeDamage(this, new Random().nextInt((this.attack / 5) + 1));
-        }*/
         return takenDamage;
     }
 
     public void increaseLevel() {
         this.level++;
-    }
-
-    public Integer getMaxHp() {
-        return maxHp;
-    }
-
-    public void setMaxHp(Integer maxHp) {
-        this.maxHp = maxHp;
-    }
-
-    public Integer getHp() {
-        return hp;
-    }
-
-    public void setHp(Integer hp) {
-        this.hp = hp;
-    }
-
-    public Integer getAttack() {
-        return attack;
-    }
-
-    public void setAttack(Integer attack) {
-        bankPoint -= attack - this.attack;
-        this.attack = attack;
-    }
-
-    public Integer getDefense() {
-        return defense;
-    }
-
-    public void setDefense(Integer defense) {
-        bankPoint -= defense -= this.defense;
-        this.defense = defense;
-    }
-
-    public Integer getHitPoints() {
-        return hitPoints;
-    }
-
-    public void setHitPoints(Integer hitPoints) {
-        bankPoint -= hitPoints -= this.hitPoints;
-        this.hitPoints = hitPoints;
-    }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
     }
 
     public void moveRight() {
@@ -127,66 +103,14 @@ public abstract class Character {
         return hp > 0;
     }
 
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
-    public Integer getMana() {
-        return mana;
-    }
-
-    public void setMana(Integer mana) {
-        this.mana = mana;
-    }
-
-    public static Integer getBankPoint() {
-        return bankPoint;
-    }
-
-    public static void setBankPoint(Integer bankPoint) {
-        Character.bankPoint = bankPoint;
-    }
-
-    public CharacterClass getCharacterClass() {
-        return characterClass;
-    }
-
-    public void setCharacterClass(CharacterClass characterClass) {
-        this.characterClass = characterClass;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Weapon getWeapon() {
-        return weapon;
-    }
-
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
         this.attack = this.weapon.getAttack();
     }
 
-    public Armor getArmor() {
-        return armor;
-    }
-
     public void setArmor(Armor armor) {
         this.armor = armor;
         this.defense = this.armor.getDefense();
-    }
-
-    public Helm getHelm() {
-        return helm;
     }
 
     public void setHelm(Helm helm) {

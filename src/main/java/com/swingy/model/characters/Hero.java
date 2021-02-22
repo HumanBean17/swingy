@@ -4,17 +4,34 @@ import com.swingy.controller.MainController;
 import com.swingy.gui.Coordinates;
 import com.swingy.model.armor.LightArmor;
 import com.swingy.model.helm.LightHelm;
-import com.swingy.model.weapon.Claymore;
+import com.swingy.model.weapon.Fists;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "HERO")
 public class Hero extends Character {
 
-    private Integer experience = 0;
+    @Column(name = "EXPERIENCE")
+    protected Integer experience = 0;
 
     private static Hero hero;
 
     public Hero() {
         super();
         coordinates = new Coordinates();
+    }
+
+    public static Hero getHero() {
+        if (hero == null)
+            createHero();
+        return hero;
     }
 
     public static Hero createHero() {
@@ -30,7 +47,7 @@ public class Hero extends Character {
         hero.maxHp = 105;
         hero.hp = 105;
         hero.characterClass = new Warrior();
-        setWeapon(new Claymore());
+        setWeapon(new Fists());
         setArmor(new LightArmor());
         setHelm(new LightHelm());
     }
@@ -58,20 +75,8 @@ public class Hero extends Character {
         }
     }
 
-    public static Hero getHero() {
-        return hero;
-    }
-
-    public Integer getExperience() {
-        return experience;
-    }
-
     public void addExperience(Integer experience) {
         this.experience += experience;
-    }
-
-    public void setExperience(Integer experience) {
-        this.experience = experience;
     }
 
 }

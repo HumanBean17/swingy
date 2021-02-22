@@ -1,18 +1,39 @@
 package com.swingy.gui;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "COORDINATES")
 public class Coordinates {
 
-    private int x;
-    private int y;
+    @Id
+    @Column(name = "ID", columnDefinition = "UUID")
+    protected UUID id;
+    @Column(name = "X")
+    private Integer x;
+    @Column(name = "Y")
+    private Integer y;
 
     public Coordinates(int x, int y) {
+        this.id = UUID.randomUUID();
         this.x = x;
         this.y = y;
     }
 
     public Coordinates() {
-        x = 0;
-        y = 0;
+        this.id = UUID.randomUUID();
+        this.x = 0;
+        this.y = 0;
     }
 
     public void incX() {
@@ -31,19 +52,4 @@ public class Coordinates {
         y += 1;
     }
 
-    public Integer getX() {
-        return x;
-    }
-
-    public void setX(Integer x) {
-        this.x = x;
-    }
-
-    public Integer getY() {
-        return y;
-    }
-
-    public void setY(Integer y) {
-        this.y = y;
-    }
 }

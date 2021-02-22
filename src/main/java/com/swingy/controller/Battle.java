@@ -8,7 +8,6 @@ import java.util.Random;
 
 public class Battle {
 
-
     public static boolean startBattle(Villain villain) {
         boolean isHeroWon = true;
         while (true) {
