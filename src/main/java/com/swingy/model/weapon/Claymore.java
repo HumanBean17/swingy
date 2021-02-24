@@ -1,9 +1,27 @@
 package com.swingy.model.weapon;
 
-public class Claymore extends Weapon {
+import java.util.UUID;
 
-    private Integer attack = 25;
-    private String name = "Claymore";
+
+public class Claymore implements Weapon {
+
+    protected UUID id;
+    protected Integer attack = 25;
+    protected String name = "Claymore";
+
+    public Claymore() {
+        this.id = UUID.randomUUID();
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     @Override
     public Integer getAttack() {
@@ -14,4 +32,15 @@ public class Claymore extends Weapon {
     public void setAttack(Integer attack) {
         this.attack = attack;
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

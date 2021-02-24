@@ -10,24 +10,28 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
-@Getter
-@Setter
-@AllArgsConstructor
 @Entity
 @Table(name = "WEAPON")
-public abstract class Weapon {
+public interface Weapon {
 
     @Id
     @Column(name = "ID")
-    protected UUID id;
-
+    UUID id = null;
     @Column(name = "ATTACK")
-    protected Integer attack = 0;
+    Integer attack = 0;
     @Column(name = "NAME")
-    protected String name = "";
+    String name = "";
 
-    public Weapon() {
-        this.id = UUID.randomUUID();
-    }
+    UUID getId();
+
+    void setId(UUID id);
+
+    Integer getAttack();
+
+    void setAttack(Integer attack);
+
+    String getName();
+
+    void setName(String name);
 
 }

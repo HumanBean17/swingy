@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
-@Getter
-@Setter
 @Entity
 @AllArgsConstructor
 @Table(name = "HELM")
@@ -27,6 +25,30 @@ public abstract class Helm {
 
     public Helm() {
         this.id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getHitPoints() {
+        return hitPoints;
+    }
+
+    public void setHitPoints(Integer hitPoints) {
+        this.hitPoints = hitPoints;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

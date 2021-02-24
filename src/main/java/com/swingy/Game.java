@@ -65,16 +65,22 @@ public class Game {
 
     public void run() {
         MainController.HeroPick heroPick = MainController.pickHero();
-        this.gui = TermGui.createShellGui(); //TODO handle through
+        this.gui = TermGui.createShellGui(); //TODO handle through args
         if (heroPick.equals(MainController.HeroPick.CREATE)) {
             Hero hero = Hero.createHero();
-            if (!GameDb.createHero(hero))
-                Main.restartTheGame();
+            if (!GameDb.createHero(hero)) {
+                System.out.println("Error while saving hero to database. Game progress will not be saved after exit the game.");
+            }
             heroLastPos = Hero.getHero().getCoordinates();
             map = Map.getMap();
             gameCycle();
         } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
-            if (!GameDb.)
+            Hero hero = GameDb.selectHero(MainController.pickName());
+            if (hero == null) {
+                System.out.println("Error while selecting a hero. Probably it wasn't created.");
+                Main.restartTheGame();
+            }
+
         }
     }
 

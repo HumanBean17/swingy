@@ -2,8 +2,8 @@ package com.swingy.model.helm;
 
 public class LightHelm extends Helm {
 
-    private Integer hitPoints = 10;
-    private final String name = "Light helmet";
+    protected Integer hitPoints = 10;
+    protected final String name = "Light helmet";
 
     public Integer getHitPoints() {
         return hitPoints;

@@ -1,11 +1,17 @@
 package com.swingy.db;
 
+import com.swingy.exception.PlayerNotFoundException;
 import com.swingy.gui.Coordinates;
 import com.swingy.model.armor.Armor;
-import com.swingy.model.characters.CharacterClass;
-import com.swingy.model.characters.Hero;
+import com.swingy.model.armor.HeavyArmor;
+import com.swingy.model.armor.LightArmor;
+import com.swingy.model.armor.MediumArmor;
+import com.swingy.model.characters.*;
+import com.swingy.model.helm.HeavyHelm;
 import com.swingy.model.helm.Helm;
-import com.swingy.model.weapon.Weapon;
+import com.swingy.model.helm.LightHelm;
+import com.swingy.model.helm.MediumHelm;
+import com.swingy.model.weapon.*;
 
 import java.sql.*;
 import java.util.Properties;
@@ -26,7 +32,7 @@ public class GameDb {
             connection = DriverManager.getConnection(url, properties);
             updateTables();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
         return connection;
     }
@@ -65,8 +71,125 @@ public class GameDb {
 
     }
 
-    public static Hero selectHero() {
+    private static Weapon retrieveWeapon(ResultSet resultSet) throws SQLException {
+        String weaponName = "w_name";
+        String result = resultSet.getString(weaponName);
+        switch (result.toLowerCase()) {
+            case "axe":
+                return new Axe();
+            case "claymore":
+                return new Claymore();
+            case "knife":
+                return new Knife();
+            case "fists":
+                return new Fists();
+            default:
+                throw new SQLException("Unknown weapon provided " + result);
+        }
 
+    }
+
+    private static Armor retrieveArmor(ResultSet resultSet) throws SQLException {
+        String armorName = "a_name";
+        String result = resultSet.getString(armorName);
+        switch (result.toLowerCase()) {
+            case "light armor":
+                return new LightArmor();
+            case "medium armor":
+                return new MediumArmor();
+            case "heavy armor":
+                return new HeavyArmor();
+            default:
+                throw new SQLException("Unknown armor provided " + result);
+        }
+
+    }
+
+    private static CharacterClass retrieveCharacterClass(ResultSet resultSet) throws SQLException {
+        String characterClassName = "cc_name";
+        String result = resultSet.getString(characterClassName);
+        switch (result.toLowerCase()) {
+            case "wizard":
+                return new Wizard();
+            case "warrior":
+                return new Warrior();
+            case "archer":
+                return new Archer();
+            default:
+                throw new SQLException("Unknown character class provided " + result);
+        }
+    }
+
+    private static Helm retrieveHelm(ResultSet resultSet) throws SQLException {
+        String helmName = "h_name";
+        String result = resultSet.getString(helmName);
+        switch (result.toLowerCase()) {
+            case "heavy helmet":
+                return new HeavyHelm();
+            case "medium helmet":
+                return new MediumHelm();
+            case "light helmet":
+                return new LightHelm();
+            default:
+                throw new SQLException("Unknown helmet provided " + result);
+        }
+    }
+
+    public static Hero selectHero(String name) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Hero hero;
+        try {
+            connection = connectToDb();
+            if (connection == null)
+                throw new NullPointerException();
+
+            statement = connection.prepareStatement(
+                    "SELECT h.id, " +
+                            "c.x x, c.y y, " +
+                            "w.name w_name, " +
+                            "a.name a_name, " +
+                            "cc.class_name cc_name, " +
+                            "h.name, " +
+                            "h.level, h.experience, h.attack, h.defense, h.hit_points, h.max_hp, h.hp, h.mana, h.name " +
+                         "FROM hero h " +
+                            "JOIN coordinates c on h.coordinates = c.id " +
+                            "JOIN character_class cc on h.character_class = cc.id " +
+                            "JOIN weapon w on h.weapon = w.id " +
+                            "JOIN armor a on h.armor = a.id " +
+                            "JOIN helm h2 on h.helm = h2.id " +
+                        "WHERE h.name = ?");
+            statement.setString(1, name);
+            resultSet = statement.executeQuery();
+            if (!resultSet.next()) {
+                throw new PlayerNotFoundException();
+            }
+
+            hero = Hero.createHero();
+            hero.setCoordinates(new Coordinates(resultSet.getInt("x"), resultSet.getInt("y")));
+            hero.setWeapon(retrieveWeapon(resultSet));
+            hero.setArmor(retrieveArmor(resultSet));
+            hero.setCharacterClass(retrieveCharacterClass(resultSet));
+            hero.setHelm(retrieveHelm(resultSet));
+            hero.setName(resultSet.getString("name"));
+            hero.setLevel(resultSet.getInt("level"));
+            hero.setExperience(resultSet.getInt("experience"));
+            hero.setAttack(resultSet.getInt("attack"));
+            hero.setDefense(resultSet.getInt("defense"));
+            hero.setHitPoints(resultSet.getInt("hit_points"));
+            hero.setMaxHp(resultSet.getInt("max_hp"));
+            hero.setHp(resultSet.getInt("hp"));
+            hero.setMana(resultSet.getInt("mana"));
+        } catch (SQLException | NullPointerException | PlayerNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            hero = null;
+        } finally {
+            closeResultSet(resultSet);
+            closeStatement(statement);
+            closeConnection(connection);
+        }
+        return hero;
     }
 
     public static boolean createHero(Hero hero) {
@@ -100,13 +223,12 @@ public class GameDb {
             statement.setInt(14, hero.getMana());
             hero.pickName();
             statement.setString(15, hero.getName());
-
             statement.executeUpdate();
         } catch (SQLIntegrityConstraintViolationException ex) {
             System.out.println("Player already exists!");
             isSuccess = false;
         } catch (NullPointerException | SQLException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
             isSuccess = false;
         } finally {
             closeConnection(connection);

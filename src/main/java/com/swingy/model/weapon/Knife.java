@@ -1,9 +1,26 @@
 package com.swingy.model.weapon;
 
-public class Knife extends Weapon {
+import java.util.UUID;
 
-    private Integer attack = 15;
-    private String name = "Knife";
+public class Knife implements Weapon {
+
+    protected UUID id;
+    protected Integer attack = 15;
+    protected String name = "Knife";
+
+    public Knife() {
+        this.id = UUID.randomUUID();
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     @Override
     public Integer getAttack() {
@@ -14,4 +31,15 @@ public class Knife extends Weapon {
     public void setAttack(Integer attack) {
         this.attack = attack;
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

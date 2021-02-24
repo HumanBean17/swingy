@@ -43,7 +43,7 @@ public class Hero extends Character {
         hero = null;
     }
 
-    private void createBerserk() {
+    private void createWarrior() {
         hero.maxHp = 105;
         hero.hp = 105;
         hero.characterClass = new Warrior();
@@ -67,7 +67,7 @@ public class Hero extends Character {
     public void pickClass() {
         GameClass chosenClass = MainController.pickClass();
         if (chosenClass.equals(GameClass.WARRIOR)) {
-            createBerserk();
+            createWarrior();
         } else if (chosenClass.equals(GameClass.WIZARD)) {
             createWizard();
         } else if (chosenClass.equals(GameClass.ARCHER)) {
