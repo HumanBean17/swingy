@@ -21,7 +21,7 @@ public abstract class CharacterClass {
     @Column(name = "SPECIAL_TALENT")
     Talent specialTalent;
     @Column(name = "CLASS_NAME")
-    String className;
+    GameClass gameClass;
 
     public enum Talent {
         CRITICAL_DAMAGE {
@@ -85,11 +85,11 @@ public abstract class CharacterClass {
         throw new RuntimeException();
     }
 
-    public String getClassName() {
+    public GameClass getGameClass() {
         throw new RuntimeException();
     }
 
-    public void setClassName(String className) {
+    public void setGameClass(GameClass gameClass) {
         throw new RuntimeException();
     }
 

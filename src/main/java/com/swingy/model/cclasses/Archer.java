@@ -12,7 +12,7 @@ public class Archer extends CharacterClass {
 
     public Archer() {
         this.id = UUID.randomUUID();
-        this.className = "Archer";
+        this.gameClass = GameClass.ARCHER;
         this.specialTalent = Talent.SKIP_MOVE;
     }
 
@@ -35,13 +35,13 @@ public class Archer extends CharacterClass {
     }
 
     @Override
-    public String getClassName() {
-        return this.className;
+    public GameClass getGameClass() {
+        return this.gameClass;
     }
 
     @Override
-    public void setClassName(String className) {
-        this.className = className;
+    public void setGameClass(GameClass gameClass) {
+        this.gameClass = gameClass;
     }
 
     @Override

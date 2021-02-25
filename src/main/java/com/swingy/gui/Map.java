@@ -52,6 +52,10 @@ public class Map {
         return map[i][j];
     }
 
+    public void setMapCell(int i, int j, char c) {
+        map[i][j] = c;
+    }
+
     public static Map getMap() {
         if (thisMap == null)
             thisMap = new Map();

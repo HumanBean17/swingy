@@ -1,8 +1,6 @@
 package com.swingy.model.cclasses;
 
 import com.swingy.model.characters.Character;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.UUID;
 
@@ -10,7 +8,7 @@ public class Warrior extends CharacterClass {
 
     public Warrior() {
         this.id = UUID.randomUUID();
-        this.className = "Warrior";
+        this.gameClass = GameClass.WARRIOR;
         this.specialTalent = Talent.CRITICAL_DAMAGE;
     }
 
@@ -33,13 +31,13 @@ public class Warrior extends CharacterClass {
     }
 
     @Override
-    public String getClassName() {
-        return this.className;
+    public GameClass getGameClass() {
+        return this.gameClass;
     }
 
     @Override
-    public void setClassName(String className) {
-        this.className = className;
+    public void setGameClass(GameClass gameClass) {
+        this.gameClass = gameClass;
     }
 
     @Override

@@ -5,12 +5,12 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-public class MediumArmor extends Armor {
+public class WoodenArmor extends Armor {
 
-    public MediumArmor() {
+    public WoodenArmor() {
         this.id = UUID.randomUUID();
-        this.defense = 20;
-        this.name = "Medium armor";
+        this.defense = 10;
+        this.name = "Wooden armor";
     }
 
     @Override

@@ -1,16 +1,13 @@
-package com.swingy.model.armor;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.swingy.model.helm;
 
 import java.util.UUID;
 
-public class LightArmor extends Armor {
+public class FabricHelm extends Helm {
 
-    public LightArmor() {
+    public FabricHelm() {
         this.id = UUID.randomUUID();
-        this.defense = 10;
-        this.name = "Light armor";
+        this.hitPoints = 5;
+        this.name = "Fabric helmet";
     }
 
     @Override
@@ -24,13 +21,13 @@ public class LightArmor extends Armor {
     }
 
     @Override
-    public Integer getDefense() {
-        return this.defense;
+    public Integer getHitPoints() {
+        return this.hitPoints;
     }
 
     @Override
-    public void setDefense(Integer defense) {
-        this.defense = defense;
+    public void setHitPoints(Integer hitPoints) {
+        this.hitPoints = hitPoints;
     }
 
     @Override

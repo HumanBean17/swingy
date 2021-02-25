@@ -4,8 +4,6 @@ import com.swingy.model.characters.Character;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import java.util.UUID;
 
 @Getter
@@ -14,7 +12,7 @@ public class Wizard extends CharacterClass {
 
     public Wizard() {
         this.id = UUID.randomUUID();
-        this.className = "Wizard";
+        this.gameClass = GameClass.WIZARD;
         this.specialTalent = Talent.FREEZE;
     }
 
@@ -37,13 +35,13 @@ public class Wizard extends CharacterClass {
     }
 
     @Override
-    public String getClassName() {
-        return this.className;
+    public GameClass getGameClass() {
+        return this.gameClass;
     }
 
     @Override
-    public void setClassName(String className) {
-        this.className = className;
+    public void setGameClass(GameClass gameClass) {
+        this.gameClass = gameClass;
     }
 
     @Override

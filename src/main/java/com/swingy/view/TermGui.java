@@ -1,7 +1,6 @@
 package com.swingy.view;
 
 import com.swingy.Game;
-import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
 import com.swingy.model.characters.Hero;
 
@@ -16,18 +15,18 @@ public class TermGui implements Gui {
 
     public static void startBattle() {
         TermGui.flush();
-        System.out.println("You've met a villain. What are you going to do?");
+        TermGui.printMessage("You've met a villain. What are you going to do?");
         System.out.print("[1] FIGHT\n[2] RUN\n");
         System.out.print("> ");
     }
 
     public static void playerDied() {
-        System.out.println("You died. Game over on level " + Hero.getHero().getLevel());
+        TermGui.printError("You died. Game over on level " + Hero.getHero().getLevel());
     }
 
     public static void pickMovement() {
         TermGui.flush();
-        System.out.println("Where to move? : 'right/R', 'left/L', 'up/U', 'down/D', 'info'");
+        TermGui.printMessage("Where to move? : 'right/R', 'left/L', 'up/U', 'down/D', 'info'");
         System.out.print("> ");
     }
 
@@ -46,10 +45,15 @@ public class TermGui implements Gui {
         System.out.print("What's your name, stranger?\n> ");
     }
 
+    public static void pickPrize(String prizeName) {
+        TermGui.flush();
+        System.out.print(prizeName + " has dropped from killed enemy. Would you like to take it? (yes/no) > ");
+    }
+
     public static void info(Hero hero) {
         TermGui.flush();
         System.out.format("name:                %s\n", hero.getName());
-        System.out.format("class:               %s\n", hero.getCharacterClass().getClassName());
+        System.out.format("class:               %s\n", hero.getCharacterClass().getGameClass());
         System.out.format("health points:       %d/%d\n", hero.getHp(), Hero.getHero().getMaxHp());
         System.out.format("level:               %d\n", hero.getLevel());
         System.out.format("experience:          %d/%d\n", hero.getExperience(), Game.getNextLevelExperience());
@@ -64,7 +68,12 @@ public class TermGui implements Gui {
             System.out.format("helmet:          %s\n", hero.getHelm().getName());
     }
 
-    public static void error(String message) {
+    public static void printError(String message) {
+        flush();
+        System.out.println(message);
+    }
+
+    public static void printMessage(String message) {
         flush();
         System.out.println(message);
     }

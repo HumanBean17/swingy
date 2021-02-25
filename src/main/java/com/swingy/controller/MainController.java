@@ -93,6 +93,18 @@ public class MainController {
         }
     }
 
+    public static boolean pickPrize(String prizeName) {
+        while (true) {
+            TermGui.pickPrize(prizeName);
+            String userInput = scanner.next().toLowerCase();
+            if (userInput.startsWith("y")) {
+                return true;
+            } else if (userInput.startsWith("n")) {
+                return false;
+            }
+        }
+    }
+
     public enum HeroPick {
         CREATE,
         SELECT

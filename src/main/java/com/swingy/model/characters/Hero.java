@@ -3,13 +3,16 @@ package com.swingy.model.characters;
 import com.swingy.controller.MainController;
 import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
-import com.swingy.model.armor.LightArmor;
+import com.swingy.model.armor.FabricArmor;
+import com.swingy.model.armor.WoodenArmor;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.cclasses.Warrior;
-import com.swingy.model.helm.LightHelm;
+import com.swingy.model.helm.FabricHelm;
+import com.swingy.model.helm.WoodenHelm;
 import com.swingy.model.weapon.Fists;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +22,7 @@ import javax.persistence.Table;
 @Setter
 @Entity
 @Table(name = "HERO")
+@ToString(callSuper = true)
 public class Hero extends Character {
 
     @Column(name = "EXPERIENCE")
@@ -44,6 +48,8 @@ public class Hero extends Character {
 
     public static Hero createHero() {
         hero = new Hero();
+        hero.pickClass();
+        hero.pickName();
         return hero;
     }
 
@@ -52,12 +58,12 @@ public class Hero extends Character {
     }
 
     private void createWarrior() {
-        hero.maxHp = 105;
-        hero.hp = 105;
+        hero.maxHp = 100;
+        hero.hp = 100;
         hero.characterClass = new Warrior();
         setWeapon(new Fists());
-        setArmor(new LightArmor());
-        setHelm(new LightHelm());
+        setArmor(new FabricArmor());
+        setHelm(new FabricHelm());
     }
 
     private void createWizard() {
@@ -65,7 +71,7 @@ public class Hero extends Character {
     }
 
     private void createArcher() {
-
+        
     }
 
     public void pickName() {

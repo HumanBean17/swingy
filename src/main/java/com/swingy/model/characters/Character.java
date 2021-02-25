@@ -5,9 +5,11 @@ import com.swingy.model.armor.Armor;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.helm.Helm;
 import com.swingy.model.weapon.Weapon;
+import com.swingy.view.TermGui;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public abstract class Character {
 
     @Id
@@ -64,8 +67,8 @@ public abstract class Character {
     // TODO: implement special talents
     public Integer attack(Character enemy) {
         Integer damage = this.attack + (this.hitPoints > 0 ? new Random().nextInt(this.hitPoints) : 0);
-        System.out.println(this.characterClass.getClassName() + " " + this.name + " attacks " +
-                enemy.getCharacterClass().getClassName() + " " + enemy.getName() + " with damage " + damage);
+        TermGui.printMessage(this.characterClass.getGameClass() + " " + this.name + " attacks " +
+                enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage);
         enemy.takeDamage(this, damage);
         return damage;
     }
@@ -75,7 +78,7 @@ public abstract class Character {
         if (this.defense > 0)
             takenDamage = Math.max(damage - new Random().nextInt(this.defense), 0);
         this.hp -= takenDamage;
-        System.out.println(this.characterClass.getClassName() + " " + this.name + " takes damage " +
+        TermGui.printMessage(this.characterClass.getGameClass() + " " + this.name + " takes damage " +
                 takenDamage + " and has " + this.hp + " health points");
         return takenDamage;
     }

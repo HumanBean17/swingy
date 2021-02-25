@@ -3,19 +3,13 @@ package com.swingy.db;
 import com.swingy.exception.ConnectionFailedException;
 import com.swingy.exception.PlayerNotFoundException;
 import com.swingy.gui.Coordinates;
-import com.swingy.model.armor.Armor;
-import com.swingy.model.armor.HeavyArmor;
-import com.swingy.model.armor.LightArmor;
-import com.swingy.model.armor.MediumArmor;
+import com.swingy.model.armor.*;
 import com.swingy.model.cclasses.Archer;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.cclasses.Warrior;
 import com.swingy.model.cclasses.Wizard;
 import com.swingy.model.characters.*;
-import com.swingy.model.helm.HeavyHelm;
-import com.swingy.model.helm.Helm;
-import com.swingy.model.helm.LightHelm;
-import com.swingy.model.helm.MediumHelm;
+import com.swingy.model.helm.*;
 import com.swingy.model.weapon.*;
 import com.swingy.view.TermGui;
 
@@ -42,7 +36,7 @@ public class GameDb {
             connection = DriverManager.getConnection(url, properties);
             updateTables();
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+            TermGui.printError(ex.getMessage());
         }
         return connection;
     }
@@ -129,7 +123,7 @@ public class GameDb {
             hero.setHp(resultSet.getInt("hp"));
             hero.setMana(resultSet.getInt("mana"));
         } catch (SQLException | NullPointerException | ConnectionFailedException | PlayerNotFoundException ex) {
-            TermGui.error(ex.getMessage());
+            TermGui.printError(ex.getMessage());
             hero = null;
         } finally {
             closeResultSet(resultSet);
@@ -153,7 +147,7 @@ public class GameDb {
                             "VALUES (?::UUID, ?::UUID, ?::UUID, ?::UUID, ?::UUID, ?::UUID, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             statement.setString(1, hero.getId().toString());
             statement.setString(2, createCoordinates(hero.getCoordinates()).toString());
-            statement.setString(3, createCharacterClass(hero).toString());
+            statement.setString(3, createCharacterClass(hero, hero.getCharacterClass()).toString());
             statement.setString(4, createWeapon(hero.getWeapon()).toString());
             statement.setString(5, createArmor(hero.getArmor()).toString());
             statement.setString(6, createHelm(hero.getHelm()).toString());
@@ -165,11 +159,10 @@ public class GameDb {
             statement.setInt(12, hero.getMaxHp());
             statement.setInt(13, hero.getHp());
             statement.setInt(14, hero.getMana());
-            hero.pickName();
             statement.setString(15, hero.getName());
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            TermGui.error(ex.getMessage());
+            TermGui.printError(ex.getMessage());
             isSuccess = false;
         } finally {
             //closeConnection(connection);
@@ -201,31 +194,95 @@ public class GameDb {
                             "hp = ?, " + //12
                             "mana = ? " + //13
                         "WHERE name = ?"); //14
-            statement.setString(1, hero.getId().toString());
-            statement.setString(2, createCoordinates(hero.getCoordinates()).toString());
-            statement.setString(3, createCharacterClass(hero).toString());
-            statement.setString(4, createWeapon(hero.getWeapon()).toString());
-            statement.setString(5, createArmor(hero.getArmor()).toString());
-            statement.setString(6, createHelm(hero.getHelm()).toString());
-            statement.setInt(7, hero.getLevel());
-            statement.setInt(8, hero.getExperience());
-            statement.setInt(9, hero.getAttack());
-            statement.setInt(10, hero.getDefense());
-            statement.setInt(11, hero.getHitPoints());
-            statement.setInt(12, hero.getMaxHp());
-            statement.setInt(13, hero.getHp());
-            statement.setInt(14, hero.getMana());
-            hero.pickName();
-            statement.setString(15, hero.getName());
+            statement.setString(1, updateCoordinates(hero.getCoordinates()).toString());
+            statement.setString(2, updateCharacterClass(hero, hero.getCharacterClass()).toString());
+            statement.setString(3, updateWeapon(hero.getWeapon()).toString());
+            statement.setString(4, updateArmor(hero.getArmor()).toString());
+            statement.setString(5, updateHelm(hero.getHelm()).toString());
+            statement.setInt(6, hero.getLevel());
+            statement.setInt(7, hero.getExperience());
+            statement.setInt(8, hero.getAttack());
+            statement.setInt(9, hero.getDefense());
+            statement.setInt(10, hero.getHitPoints());
+            statement.setInt(11, hero.getMaxHp());
+            statement.setInt(12, hero.getHp());
+            statement.setInt(13, hero.getMana());
+            statement.setString(14, hero.getName());
+
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            TermGui.error(ex.getMessage());
+            //TermGui.printError(ex.getMessage());
             isSuccess = false;
         } finally {
             //closeConnection(connection);
             closeStatement(statement);
         }
         return isSuccess;
+    }
+
+    private static UUID updateHelm(Helm helm) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "UPDATE HELM " +
+                        "hit_points = ?, " +
+                        "name = ?" +
+                        "WHERE id = ?");
+        statement.setInt(1, helm.getHitPoints());
+        statement.setString(2, helm.getName());
+        statement.setString(3, helm.getId().toString());
+        statement.executeUpdate();
+        return helm.getId();
+    }
+
+    private static UUID updateArmor(Armor armor) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "UPDATE ARMOR " +
+                        "SET defense = ?, " +
+                        "name = ?" +
+                        "WHERE id = ?");
+        statement.setInt(1, armor.getDefense());
+        statement.setString(2, armor.getName());
+        statement.setString(3, armor.getId().toString());
+        statement.executeUpdate();
+        return armor.getId();
+    }
+
+    private static UUID updateWeapon(Weapon weapon) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "UPDATE WEAPON " +
+                        "SET attack = ?, " +
+                        "name = ? " +
+                        "WHERE id = ?");
+        statement.setInt(1, weapon.getAttack());
+        statement.setString(2, weapon.getName());
+        statement.setString(3, weapon.getId().toString());
+        statement.executeUpdate();
+        return weapon.getId();
+    }
+
+    private static UUID updateCharacterClass(Hero hero, CharacterClass characterClass) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "UPDATE CHARACTER_CLASS " +
+                        "class_name = ?, " +
+                        "special_talent) = ? " +
+                     "WHERE id = ?");
+        statement.setString(1, characterClass.getGameClass().toString());
+        statement.setString(2, characterClass.getSpecialTalent(hero).toString());
+        statement.setString(3, characterClass.getId().toString());
+        statement.executeUpdate();
+        return characterClass.getId();
+    }
+
+    private static UUID updateCoordinates(Coordinates coordinates) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "UPDATE COORDINATES SET " +
+                        "x = ?" +
+                        "y = ?" +
+                     "WHERE id = ?");
+        statement.setInt(1, coordinates.getX());
+        statement.setInt(2, coordinates.getY());
+        statement.setString(3, coordinates.getId().toString());
+        statement.executeUpdate();
+        return coordinates.getId();
     }
 
     private static UUID createHelm(Helm helm) throws SQLException {
@@ -264,19 +321,16 @@ public class GameDb {
         return coordinates.getId();
     }
 
-    private static UUID createCharacterClass(Hero hero) throws SQLException {
-        hero.pickClass();
-        CharacterClass characterClass = hero.getCharacterClass();
-
+    private static UUID createCharacterClass(Hero hero, CharacterClass characterClass) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO CHARACTER_CLASS " +
                         "(id, class_name, special_talent) " +
                         "VALUES (?::UUID, ? , ?)");
-        statement.setString(1, hero.getId().toString());
-        statement.setString(2, characterClass.getClassName());
+        statement.setString(1, characterClass.getId().toString());
+        statement.setString(2, characterClass.getGameClass().toString());
         statement.setString(3, characterClass.getSpecialTalent(hero).toString());
         statement.executeUpdate();
-        return hero.getId();
+        return characterClass.getId();
     }
 
     private static UUID createWeapon(Weapon weapon) throws SQLException {
@@ -313,12 +367,14 @@ public class GameDb {
         String armorName = "a_name";
         String result = resultSet.getString(armorName);
         switch (result.toLowerCase()) {
-            case "light armor":
-                return new LightArmor();
-            case "medium armor":
-                return new MediumArmor();
-            case "heavy armor":
-                return new HeavyArmor();
+            case "fabric armor":
+                return new FabricArmor();
+            case "wooden armor":
+                return new WoodenArmor();
+            case "cooper armor":
+                return new CooperArmor();
+            case "iron armor":
+                return new IronArmor();
             default:
                 throw new SQLException("Unknown armor provided " + result);
         }
@@ -344,12 +400,14 @@ public class GameDb {
         String helmName = "h_name";
         String result = resultSet.getString(helmName);
         switch (result.toLowerCase()) {
-            case "heavy helmet":
-                return new HeavyHelm();
-            case "medium helmet":
-                return new MediumHelm();
-            case "light helmet":
-                return new LightHelm();
+            case "fabric helmet":
+                return new FabricHelm();
+            case "iron helmet":
+                return new IronHelm();
+            case "cooper helmet":
+                return new CooperHelm();
+            case "wooden helmet":
+                return new WoodenHelm();
             default:
                 throw new SQLException("Unknown helmet provided " + result);
         }

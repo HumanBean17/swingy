@@ -27,6 +27,11 @@ public class Game {
         enemies.add(new Villain(coordinates));
     }
 
+    public static void deleteVillain(Villain villain) {
+        Map.getMap().setMapCell(villain.getCoordinates().getY(), villain.getCoordinates().getX(), '.');
+        enemies.remove(villain);
+    }
+
     public void gameCycle() {
         heroLastPos = Hero.getHero().getCoordinates();
         MoveDirection direction;
@@ -45,9 +50,9 @@ public class Game {
                 }
             }
             if (direction == MoveDirection.BORDER && checkNextLevel()) {
-                System.out.println("Level up! You're now level " + Hero.getHero().getLevel() + 1);
+                TermGui.printMessage("Level up! You're now level " + Hero.getHero().getLevel() + 1);
                 if (Hero.getHero().getLevel() >= 7) {
-                    System.out.println("Congratulations! You've reached game level 7 and completed the game.");
+                    TermGui.printMessage("Congratulations! You've reached game level 7 and completed the game.");
                     Main.restartTheGame();
                 } else {
                     nextLevel();
@@ -56,7 +61,7 @@ public class Game {
                 Hero.getHero().resetHeroPos();
                 Map.getMap().generateMap();
             }
-            GameDb.insertHero(Hero.getHero());
+            GameDb.updateHero(Hero.getHero());
         }
         Main.restartTheGame();
     }
@@ -74,13 +79,13 @@ public class Game {
         if (heroPick.equals(MainController.HeroPick.CREATE)) {
             Hero hero = Hero.createHero();
             if (!GameDb.insertHero(hero)) {
-                System.out.println("Error while saving hero to database. Game progress will not be saved after exit the game.");
+                TermGui.printMessage("Error while saving hero to database. Game progress will not be saved after exit the game.");
             }
             Map.getMap().createMap(true);
         } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
             Hero hero = GameDb.selectHero(MainController.pickName());
             if (hero == null) {
-                System.out.println("Error while selecting a hero. Probably it wasn't created.");
+                TermGui.printError("Error while selecting a hero. Probably it wasn't created.");
                 Main.restartTheGame();
             }
             Map.getMap().createMap(false);
