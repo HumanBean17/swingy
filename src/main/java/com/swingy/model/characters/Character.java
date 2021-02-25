@@ -2,6 +2,7 @@ package com.swingy.model.characters;
 
 import com.swingy.gui.Coordinates;
 import com.swingy.model.armor.Armor;
+import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.helm.Helm;
 import com.swingy.model.weapon.Weapon;
 import lombok.AllArgsConstructor;

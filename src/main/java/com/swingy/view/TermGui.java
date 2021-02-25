@@ -64,8 +64,9 @@ public class TermGui implements Gui {
             System.out.format("helmet:          %s\n", hero.getHelm().getName());
     }
 
-    public static void error() {
-
+    public static void error(String message) {
+        flush();
+        System.out.println(message);
     }
 
     public static void pickClass() {

@@ -2,19 +2,17 @@ package com.swingy.model.weapon;
 
 import java.util.UUID;
 
-public class Axe implements Weapon {
-
-    public UUID id;
-    protected Integer attack = 35;
-    protected String name = "Axe";
+public class Axe extends Weapon {
 
     public Axe() {
         this.id = UUID.randomUUID();
+        this.attack = 35;
+        this.name = "Axe";
     }
 
     @Override
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     @Override
@@ -24,7 +22,7 @@ public class Axe implements Weapon {
 
     @Override
     public Integer getAttack() {
-        return attack;
+        return this.attack;
     }
 
     @Override
@@ -34,12 +32,13 @@ public class Axe implements Weapon {
 
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override
     public void setName(String name) {
         this.name = name;
     }
+
 
 }

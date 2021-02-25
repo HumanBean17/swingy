@@ -1,20 +1,21 @@
 package com.swingy.model.weapon;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 
-public class Knife implements Weapon {
-
-    protected UUID id;
-    protected Integer attack = 15;
-    protected String name = "Knife";
+public class Knife extends Weapon {
 
     public Knife() {
         this.id = UUID.randomUUID();
+        this.attack = 15;
+        this.name = "Knife";
     }
 
     @Override
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class Knife implements Weapon {
 
     @Override
     public Integer getAttack() {
-        return attack;
+        return this.attack;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class Knife implements Weapon {
 
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override

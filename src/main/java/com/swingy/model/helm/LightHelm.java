@@ -1,16 +1,46 @@
 package com.swingy.model.helm;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.UUID;
+
 public class LightHelm extends Helm {
 
-    protected Integer hitPoints = 10;
-    protected final String name = "Light helmet";
-
-    public Integer getHitPoints() {
-        return hitPoints;
+    public LightHelm() {
+        this.id = UUID.randomUUID();
+        this.hitPoints = 10;
+        this.name = "Light helmet";
     }
 
+    @Override
+    public UUID getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    @Override
+    public Integer getHitPoints() {
+        return this.hitPoints;
+    }
+
+    @Override
     public void setHitPoints(Integer hitPoints) {
         this.hitPoints = hitPoints;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

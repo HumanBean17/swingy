@@ -1,8 +1,10 @@
 package com.swingy.model.weapon;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,26 +14,39 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "WEAPON")
-public interface Weapon {
+@FieldDefaults(level = AccessLevel.PROTECTED)
+public abstract class Weapon {
 
     @Id
     @Column(name = "ID")
-    UUID id = null;
+    UUID id;
     @Column(name = "ATTACK")
-    Integer attack = 0;
+    Integer attack;
     @Column(name = "NAME")
-    String name = "";
+    String name;
 
-    UUID getId();
+    public UUID getId() {
+        throw new RuntimeException();
+    }
 
-    void setId(UUID id);
+    public void setId(UUID id) {
+        throw new RuntimeException();
+    }
 
-    Integer getAttack();
+    public Integer getAttack() {
+        throw new RuntimeException();
+    }
 
-    void setAttack(Integer attack);
+    public void setAttack(Integer attack) {
+        throw new RuntimeException();
+    }
 
-    String getName();
+    public String getName() {
+        throw new RuntimeException();
+    }
 
-    void setName(String name);
+    public void setName(String name) {
+        throw new RuntimeException();
+    }
 
 }

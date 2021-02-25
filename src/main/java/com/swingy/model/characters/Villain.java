@@ -1,6 +1,8 @@
 package com.swingy.model.characters;
 
 import com.swingy.gui.Coordinates;
+import com.swingy.model.cclasses.CharacterClass;
+import com.swingy.model.cclasses.Warrior;
 
 import java.util.Random;
 

@@ -1,8 +1,7 @@
 package com.swingy.model.helm;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,44 +10,40 @@ import javax.persistence.Table;
 import java.util.UUID;
 
 @Entity
-@AllArgsConstructor
 @Table(name = "HELM")
+@FieldDefaults(level = AccessLevel.PROTECTED)
 public abstract class Helm {
 
     @Id
     @Column(name = "ID")
-    protected UUID id;
+    UUID id;
     @Column(name = "HIT_POINTS")
-    protected Integer hitPoints;
+    Integer hitPoints;
     @Column(name = "NAME")
-    protected String name = "";
-
-    public Helm() {
-        this.id = UUID.randomUUID();
-    }
+    String name;
 
     public UUID getId() {
-        return id;
+        throw new RuntimeException();
     }
 
     public void setId(UUID id) {
-        this.id = id;
+        throw new RuntimeException();
     }
 
     public Integer getHitPoints() {
-        return hitPoints;
+        throw new RuntimeException();
     }
 
     public void setHitPoints(Integer hitPoints) {
-        this.hitPoints = hitPoints;
+        throw new RuntimeException();
     }
 
     public String getName() {
-        return name;
+        throw new RuntimeException();
     }
 
     public void setName(String name) {
-        this.name = name;
+        throw new RuntimeException();
     }
 
 }

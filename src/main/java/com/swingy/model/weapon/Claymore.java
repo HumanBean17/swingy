@@ -1,21 +1,21 @@
 package com.swingy.model.weapon;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 
-
-public class Claymore implements Weapon {
-
-    protected UUID id;
-    protected Integer attack = 25;
-    protected String name = "Claymore";
+public class Claymore extends Weapon {
 
     public Claymore() {
         this.id = UUID.randomUUID();
+        this.attack = 25;
+        this.name = "Claymore";
     }
 
     @Override
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class Claymore implements Weapon {
 
     @Override
     public Integer getAttack() {
-        return attack;
+        return this.attack;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Claymore implements Weapon {
 
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override

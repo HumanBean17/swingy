@@ -34,22 +34,18 @@ public class Map {
         generateMap();
     }
 
-    public void createMap() {
+    public Map createMap(boolean resetPos) {
         Hero hero = Hero.getHero();
         setSize((hero.getLevel() - 1) * 5 + 10 - (hero.getLevel() % 2));
         setMap(new char[size][size]);
         generateMap();
-        resetHeroPos(hero);
+        if (resetPos)
+            hero.resetHeroPos();
+        return thisMap;
     }
-
-    public void resetHeroPos(Hero hero) {
-        hero.getCoordinates().setX(size / 2);
-        hero.getCoordinates().setY(size / 2);
-    }
-
 
     public void nextLevelMap() {
-        createMap();
+        createMap(true);
     }
     
     public char getMapCell(int i, int j) {

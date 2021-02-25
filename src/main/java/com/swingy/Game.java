@@ -10,7 +10,6 @@ import com.swingy.model.characters.Villain;
 import com.swingy.view.TermGui;
 import com.swingy.model.characters.Hero;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -20,7 +19,6 @@ public class Game {
     private static final Scanner scanner = new Scanner(System.in);
     private TermGui gui;
 
-    private Map map;
     private static List<Villain> enemies = new LinkedList<>();
 
     private static Coordinates heroLastPos = null;
@@ -30,7 +28,7 @@ public class Game {
     }
 
     public void gameCycle() {
-        map.createMap();
+        heroLastPos = Hero.getHero().getCoordinates();
         MoveDirection direction;
         ActionOnMove action;
         Villain villain;
@@ -39,10 +37,12 @@ public class Game {
             direction = MainController.pickMovement();
             villain = checkBattle();
             if (villain != null) {
-                if (MainController.battleHandler(villain))
+                if (MainController.battleHandler(villain)) {
                     enemies.remove(villain);
-                else
+                }
+                else {
                     Main.restartTheGame();
+                }
             }
             if (direction == MoveDirection.BORDER && checkNextLevel()) {
                 System.out.println("Level up! You're now level " + Hero.getHero().getLevel() + 1);
@@ -50,17 +50,22 @@ public class Game {
                     System.out.println("Congratulations! You've reached game level 7 and completed the game.");
                     Main.restartTheGame();
                 } else {
-                    Hero.getHero().increaseLevel();
-                    Hero.getHero().setMaxHp(Hero.getHero().getLevel() * 50 + 100);
-                    Hero.getHero().setHp(Hero.getHero().getMaxHp());
-                    Map.getMap().nextLevelMap();
+                    nextLevel();
                 }
             } else if (direction == MoveDirection.BORDER) {
-                Map.getMap().resetHeroPos(Hero.getHero());
+                Hero.getHero().resetHeroPos();
                 Map.getMap().generateMap();
             }
+            GameDb.insertHero(Hero.getHero());
         }
         Main.restartTheGame();
+    }
+
+    public void nextLevel() {
+        Hero.getHero().increaseLevel();
+        Hero.getHero().setMaxHp(Hero.getHero().getLevel() * 50 + 100);
+        Hero.getHero().setHp(Hero.getHero().getMaxHp());
+        Map.getMap().nextLevelMap();
     }
 
     public void run() {
@@ -68,20 +73,19 @@ public class Game {
         this.gui = TermGui.createShellGui(); //TODO handle through args
         if (heroPick.equals(MainController.HeroPick.CREATE)) {
             Hero hero = Hero.createHero();
-            if (!GameDb.createHero(hero)) {
+            if (!GameDb.insertHero(hero)) {
                 System.out.println("Error while saving hero to database. Game progress will not be saved after exit the game.");
             }
-            heroLastPos = Hero.getHero().getCoordinates();
-            map = Map.getMap();
-            gameCycle();
+            Map.getMap().createMap(true);
         } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
             Hero hero = GameDb.selectHero(MainController.pickName());
             if (hero == null) {
                 System.out.println("Error while selecting a hero. Probably it wasn't created.");
                 Main.restartTheGame();
             }
-
+            Map.getMap().createMap(false);
         }
+        gameCycle();
     }
 
     public Villain checkBattle() {
@@ -119,10 +123,6 @@ public class Game {
 
     public static List<Villain> getEnemies() {
         return enemies;
-    }
-
-    public Map getMap() {
-        return map;
     }
 
     public TermGui getGui() {

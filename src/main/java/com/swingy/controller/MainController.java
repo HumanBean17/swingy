@@ -2,7 +2,7 @@ package com.swingy.controller;
 
 import com.swingy.Game;
 import com.swingy.gui.Map;
-import com.swingy.model.characters.GameClass;
+import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
 import com.swingy.view.TermGui;
@@ -55,8 +55,10 @@ public class MainController {
             direction = MoveDirection.SOUTH;
         } else if (userInput.startsWith("d")) {
             direction = MoveDirection.BORDER;
-        } else if (userInput.equals("info")) {
+        } else if (userInput.startsWith("i")) {
             TermGui.info(hero);
+        } else if (userInput.startsWith("e")) {
+
         }
         return direction;
     }
@@ -64,7 +66,7 @@ public class MainController {
     public static HeroPick pickHero() {
         while (true) {
             TermGui.pickHero();
-            String userInput = scanner.next();
+            String userInput = scanner.next().toLowerCase();
             if (userInput.startsWith("c"))
                 return HeroPick.CREATE;
             else if (userInput.startsWith("s"))
@@ -77,16 +79,16 @@ public class MainController {
         return scanner.next();
     }
 
-    public static GameClass pickClass() {
+    public static CharacterClass.GameClass pickClass() {
         while (true) {
             TermGui.pickClass();
-            String userInput = scanner.next();
+            String userInput = scanner.next().toLowerCase();
             if (userInput.startsWith("wa")) {
-                return GameClass.WARRIOR;
+                return CharacterClass.GameClass.WARRIOR;
             } else if (userInput.startsWith("wi")) {
-                return GameClass.WIZARD;
+                return CharacterClass.GameClass.WIZARD;
             } else if (userInput.startsWith("a")) {
-                return GameClass.ARCHER;
+                return CharacterClass.GameClass.ARCHER;
             }
         }
     }

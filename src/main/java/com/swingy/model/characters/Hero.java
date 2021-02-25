@@ -2,7 +2,10 @@ package com.swingy.model.characters;
 
 import com.swingy.controller.MainController;
 import com.swingy.gui.Coordinates;
+import com.swingy.gui.Map;
 import com.swingy.model.armor.LightArmor;
+import com.swingy.model.cclasses.CharacterClass;
+import com.swingy.model.cclasses.Warrior;
 import com.swingy.model.helm.LightHelm;
 import com.swingy.model.weapon.Fists;
 import lombok.Getter;
@@ -25,7 +28,12 @@ public class Hero extends Character {
 
     public Hero() {
         super();
-        coordinates = new Coordinates();
+        coordinates = new Coordinates(Map.getMap().getSize() / 2, Map.getMap().getSize() / 2);
+    }
+
+    public void resetHeroPos() {
+        hero.getCoordinates().setX(Map.getMap().getSize() / 2);
+        hero.getCoordinates().setY(Map.getMap().getSize() / 2);
     }
 
     public static Hero getHero() {
@@ -65,12 +73,12 @@ public class Hero extends Character {
     }
 
     public void pickClass() {
-        GameClass chosenClass = MainController.pickClass();
-        if (chosenClass.equals(GameClass.WARRIOR)) {
+        CharacterClass.GameClass chosenClass = MainController.pickClass();
+        if (chosenClass.equals(CharacterClass.GameClass.WARRIOR)) {
             createWarrior();
-        } else if (chosenClass.equals(GameClass.WIZARD)) {
+        } else if (chosenClass.equals(CharacterClass.GameClass.WIZARD)) {
             createWizard();
-        } else if (chosenClass.equals(GameClass.ARCHER)) {
+        } else if (chosenClass.equals(CharacterClass.GameClass.ARCHER)) {
             createArcher();
         }
     }
