@@ -223,7 +223,7 @@ public class GameDb {
     private static UUID updateHelm(Helm helm) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
                 "UPDATE HELM " +
-                        "hit_points = ?, " +
+                        "SET hit_points = ?, " +
                         "name = ?" +
                         "WHERE id = ?");
         statement.setInt(1, helm.getHitPoints());
@@ -262,8 +262,8 @@ public class GameDb {
     private static UUID updateCharacterClass(Hero hero, CharacterClass characterClass) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
                 "UPDATE CHARACTER_CLASS " +
-                        "class_name = ?, " +
-                        "special_talent) = ? " +
+                        "SET class_name = ?, " +
+                        "special_talent = ? " +
                      "WHERE id = ?");
         statement.setString(1, characterClass.getGameClass().toString());
         statement.setString(2, characterClass.getSpecialTalent(hero).toString());
@@ -275,7 +275,7 @@ public class GameDb {
     private static UUID updateCoordinates(Coordinates coordinates) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
                 "UPDATE COORDINATES SET " +
-                        "x = ?" +
+                        "x = ?," +
                         "y = ?" +
                      "WHERE id = ?");
         statement.setInt(1, coordinates.getX());
@@ -367,8 +367,8 @@ public class GameDb {
         String armorName = "a_name";
         String result = resultSet.getString(armorName);
         switch (result.toLowerCase()) {
-            case "fabric armor":
-                return new FabricArmor();
+            case "cloth armor":
+                return new ClothArmor();
             case "wooden armor":
                 return new WoodenArmor();
             case "cooper armor":
@@ -400,8 +400,8 @@ public class GameDb {
         String helmName = "h_name";
         String result = resultSet.getString(helmName);
         switch (result.toLowerCase()) {
-            case "fabric helmet":
-                return new FabricHelm();
+            case "cloth helmet":
+                return new ClothHelm();
             case "iron helmet":
                 return new IronHelm();
             case "cooper helmet":

@@ -15,46 +15,46 @@ public class TermGui implements Gui {
 
     public static void startBattle() {
         TermGui.flush();
-        TermGui.printMessage("You've met a villain. What are you going to do?");
-        System.out.print("[1] FIGHT\n[2] RUN\n");
+        TermGui.printMessageWithFlush("YOU'VE MET A VILLAIN. WHAT ARE YOU GOING TO DO?");
+        System.out.print("> FIGHT\n> RUN\n");
         System.out.print("> ");
     }
 
     public static void playerDied() {
-        TermGui.printError("You died. Game over on level " + Hero.getHero().getLevel());
+        TermGui.printError("YOU DIED. GAME OVER ON LEVEL " + Hero.getHero().getLevel());
     }
 
     public static void pickMovement() {
         TermGui.flush();
-        TermGui.printMessage("Where to move? : 'right/R', 'left/L', 'up/U', 'down/D', 'info'");
+        TermGui.printMessageWithFlush("WHERE TO MOVE? : 'RIGHT/R', 'LEFT/L', 'UP/U', 'DOWN/D', 'INFO'");
         System.out.print("> ");
     }
 
     public static void pickGameMode() {
         TermGui.flush();
-        System.out.print("[1] CONSOLE\n[2] GUI\n> ");
+        System.out.print("> CONSOLE\n> GUI\n> ");
     }
 
     public static void pickHero() {
         TermGui.flush();
-        System.out.print("[1] CREATE HERO\n[2] SELECT CREATED HERO\n> ");
+        System.out.print("> CREATE HERO\n> SELECT CREATED HERO\n> ");
     }
 
     public static void pickName() {
         TermGui.flush();
-        System.out.print("What's your name, stranger?\n> ");
+        System.out.print("WHAT'S YOUR NAME, STRANGER?\n> ");
     }
 
     public static void pickPrize(String prizeName) {
         TermGui.flush();
-        System.out.print(prizeName + " has dropped from killed enemy. Would you like to take it? (yes/no) > ");
+        System.out.print(prizeName + " HAS DROPPED FROM KILLED ENEMY. WOULD YOU LIKE TO TAKE IT? (YES/NO) > ");
     }
 
     public static void info(Hero hero) {
         TermGui.flush();
-        System.out.format("name:                %s\n", hero.getName());
-        System.out.format("class:               %s\n", hero.getCharacterClass().getGameClass());
-        System.out.format("health points:       %d/%d\n", hero.getHp(), Hero.getHero().getMaxHp());
+        System.out.format("NAME:                %s\n", hero.getName().toUpperCase());
+        System.out.format("CLASS:               %s\n", hero.getCharacterClass().getGameClass());
+        System.out.format("HEALTH POINTS:       %d/%d\n", hero.getHp(), Hero.getHero().getMaxHp());
         System.out.format("level:               %d\n", hero.getLevel());
         System.out.format("experience:          %d/%d\n", hero.getExperience(), Game.getNextLevelExperience());
         System.out.format("attack:              %d\n", hero.getAttack());
@@ -73,16 +73,20 @@ public class TermGui implements Gui {
         System.out.println(message);
     }
 
-    public static void printMessage(String message) {
+    public static void printMessageWithoutFlash(String message) {
+        System.out.println(message);
+    }
+
+    public static void printMessageWithFlush(String message) {
         flush();
         System.out.println(message);
     }
 
     public static void pickClass() {
         TermGui.flush();
-        System.out.print("[1] WARRIOR(chance of critical damage)\n" +
-                "[2] WIZARD(chance of freeze enemy)\n" +
-                "[3] ARCHER(chance of miss, but enemy skips first move)\n> ");
+        System.out.print("> WARRIOR (chance of critical damage)\n" +
+                "> WIZARD (chance of freeze enemy)\n" +
+                " ARCHER (chance of miss, but less more damage)\n> ");
     }
 
     public void writeMap() {

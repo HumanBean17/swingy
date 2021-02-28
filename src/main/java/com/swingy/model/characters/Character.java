@@ -1,5 +1,6 @@
 package com.swingy.model.characters;
 
+import com.swingy.Game;
 import com.swingy.gui.Coordinates;
 import com.swingy.model.armor.Armor;
 import com.swingy.model.cclasses.CharacterClass;
@@ -13,7 +14,11 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.validation.ConstraintViolation;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -48,6 +53,8 @@ public abstract class Character {
     protected CharacterClass characterClass;
 
     @Column(name = "NAME")
+    @NotNull(message = "NAME MUST NOT BE NULL")
+    @Size(min = 3, max = 10, message = "NAME SIZE MUST BE 3-10 SYMBOLS")
     protected String name;
 
     @Column(name = "WEAPON")
@@ -64,27 +71,54 @@ public abstract class Character {
         this.id = UUID.randomUUID();
     }
 
-    // TODO: implement special talents
     public Integer attack(Character enemy) {
-        Integer damage = this.attack + (this.hitPoints > 0 ? new Random().nextInt(this.hitPoints) : 0);
-        TermGui.printMessage(this.characterClass.getGameClass() + " " + this.name + " attacks " +
-                enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage);
-        enemy.takeDamage(this, damage);
+        int damage = 0;
+        if (name.equals("villain") && Hero.getHero().getCharacterClass().getGameClass().equals(CharacterClass.GameClass.WIZARD) && specialTalentRandomizer()) {
+            TermGui.printMessageWithoutFlash("ENEMY WAS FROZEN BY " + characterClass.getGameClass() + " '" + name + "'");
+            return damage;
+        }
+        if (characterClass.getGameClass().equals(CharacterClass.GameClass.ARCHER) && specialTalentRandomizer()) {
+            TermGui.printMessageWithFlush(characterClass.getGameClass() + " '" + name + "' misses");
+        } else {
+            if (characterClass.getGameClass().equals(CharacterClass.GameClass.WARRIOR) && specialTalentRandomizer()) {
+                TermGui.printMessageWithoutFlash("CRITICAL DAMAGE");
+                damage = attack + (hitPoints > 0 ? new Random().nextInt(hitPoints) : 0) * 3;
+            } else {
+                damage = attack + (hitPoints > 0 ? new Random().nextInt(hitPoints) : 0);
+            }
+            TermGui.printMessageWithoutFlash(characterClass.getGameClass() + " '" + name + "' attacks " +
+                    enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage);
+            enemy.takeDamage(damage);
+        }
         return damage;
     }
 
-    public Integer takeDamage(Character enemy, Integer damage) {
+    public Integer takeDamage(Integer damage) {
         int takenDamage = damage;
-        if (this.defense > 0)
-            takenDamage = Math.max(damage - new Random().nextInt(this.defense), 0);
-        this.hp -= takenDamage;
-        TermGui.printMessage(this.characterClass.getGameClass() + " " + this.name + " takes damage " +
-                takenDamage + " and has " + this.hp + " health points");
+        if (defense > 0)
+            takenDamage = Math.max(damage - new Random().nextInt(defense), 0);
+        hp -= takenDamage;
+        TermGui.printMessageWithFlush(characterClass.getGameClass() + " " + name + " takes damage " +
+                takenDamage + " and has " + hp + " health points");
         return takenDamage;
     }
 
+    public static boolean validate() {
+        Set<ConstraintViolation<Character>> violations = Game.validator.validate((Character) Hero.getHero());
+        boolean result = true;
+        for (ConstraintViolation<Character> violation : violations) {
+            result = false;
+            TermGui.printMessageWithFlush(violation.getMessage());
+        }
+        return result;
+    }
+
+    public boolean specialTalentRandomizer() {
+        return new Random().nextInt(100) % 10 == 0;
+    }
+
     public void increaseLevel() {
-        this.level++;
+        level++;
     }
 
     public void moveRight() {

@@ -1,15 +1,18 @@
 package com.swingy.model.characters;
 
+import com.swingy.Game;
 import com.swingy.controller.MainController;
 import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
-import com.swingy.model.armor.FabricArmor;
-import com.swingy.model.armor.WoodenArmor;
+import com.swingy.model.armor.ClothArmor;
+import com.swingy.model.cclasses.Archer;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.cclasses.Warrior;
-import com.swingy.model.helm.FabricHelm;
-import com.swingy.model.helm.WoodenHelm;
+import com.swingy.model.cclasses.Wizard;
+import com.swingy.model.helm.ClothHelm;
 import com.swingy.model.weapon.Fists;
+import com.swingy.model.weapon.Slingshot;
+import com.swingy.model.weapon.Staff;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,6 +20,8 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -48,8 +53,14 @@ public class Hero extends Character {
 
     public static Hero createHero() {
         hero = new Hero();
-        hero.pickClass();
+        hero.maxHp = 100;
+        hero.hp = 100;
         hero.pickName();
+        if (!validate()) {
+            hero = null;
+            return null;
+        }
+        hero.pickClass();
         return hero;
     }
 
@@ -58,20 +69,24 @@ public class Hero extends Character {
     }
 
     private void createWarrior() {
-        hero.maxHp = 100;
-        hero.hp = 100;
         hero.characterClass = new Warrior();
         setWeapon(new Fists());
-        setArmor(new FabricArmor());
-        setHelm(new FabricHelm());
+        setArmor(new ClothArmor());
+        setHelm(new ClothHelm());
     }
 
     private void createWizard() {
-
+        hero.characterClass = new Wizard();
+        setWeapon(new Staff());
+        setArmor(new ClothArmor());
+        setHelm(new ClothHelm());
     }
 
     private void createArcher() {
-        
+        hero.characterClass = new Archer();
+        setWeapon(new Slingshot());
+        setArmor(new ClothArmor());
+        setHelm(new ClothHelm());
     }
 
     public void pickName() {

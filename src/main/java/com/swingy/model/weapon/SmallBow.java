@@ -1,13 +1,13 @@
-package com.swingy.model.armor;
+package com.swingy.model.weapon;
 
 import java.util.UUID;
 
-public class FabricArmor extends Armor {
+public class SmallBow extends Weapon {
 
-    public FabricArmor() {
+    public SmallBow() {
         this.id = UUID.randomUUID();
-        this.defense = 5;
-        this.name = "Fabric armor";
+        this.attack = 18;
+        this.name = "Small bow";
     }
 
     @Override
@@ -21,13 +21,13 @@ public class FabricArmor extends Armor {
     }
 
     @Override
-    public Integer getDefense() {
-        return this.defense;
+    public Integer getAttack() {
+        return this.attack;
     }
 
     @Override
-    public void setDefense(Integer defense) {
-        this.defense = defense;
+    public void setAttack(Integer attack) {
+        this.attack = attack;
     }
 
     @Override
@@ -39,5 +39,4 @@ public class FabricArmor extends Armor {
     public void setName(String name) {
         this.name = name;
     }
-
 }

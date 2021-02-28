@@ -6,17 +6,20 @@ import com.swingy.controller.MoveDirection;
 import com.swingy.db.GameDb;
 import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
+import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Villain;
 import com.swingy.view.TermGui;
 import com.swingy.model.characters.Hero;
 
+import javax.validation.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Set;
 
 public class Game {
 
-    private static final Scanner scanner = new Scanner(System.in);
+    public static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
     private TermGui gui;
 
     private static List<Villain> enemies = new LinkedList<>();
@@ -35,7 +38,6 @@ public class Game {
     public void gameCycle() {
         heroLastPos = Hero.getHero().getCoordinates();
         MoveDirection direction;
-        ActionOnMove action;
         Villain villain;
         while (Hero.getHero().isAlive()) {
             gui.writeMap();
@@ -50,9 +52,9 @@ public class Game {
                 }
             }
             if (direction == MoveDirection.BORDER && checkNextLevel()) {
-                TermGui.printMessage("Level up! You're now level " + Hero.getHero().getLevel() + 1);
+                TermGui.printMessageWithFlush("Level up! You're now level " + Hero.getHero().getLevel() + 1);
                 if (Hero.getHero().getLevel() >= 7) {
-                    TermGui.printMessage("Congratulations! You've reached game level 7 and completed the game.");
+                    TermGui.printMessageWithFlush("Congratulations! You've reached game level 7 and completed the game.");
                     Main.restartTheGame();
                 } else {
                     nextLevel();
@@ -76,19 +78,25 @@ public class Game {
     public void run() {
         MainController.HeroPick heroPick = MainController.pickHero();
         this.gui = TermGui.createShellGui(); //TODO handle through args
-        if (heroPick.equals(MainController.HeroPick.CREATE)) {
-            Hero hero = Hero.createHero();
-            if (!GameDb.insertHero(hero)) {
-                TermGui.printMessage("Error while saving hero to database. Game progress will not be saved after exit the game.");
+        while (true) {
+            if (heroPick.equals(MainController.HeroPick.CREATE)) {
+                Hero hero = Hero.createHero();
+                if (hero == null) {
+                    continue;
+                }
+                if (!GameDb.insertHero(hero)) {
+                    TermGui.printMessageWithFlush("Error while saving hero to database. Game progress will not be saved after exit the game.");
+                }
+                Map.getMap().createMap(true);
+            } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
+                Hero hero = GameDb.selectHero(MainController.pickName());
+                if (hero == null) {
+                    TermGui.printError("Error while selecting a hero. Probably it wasn't created.");
+                    Main.restartTheGame();
+                }
+                Map.getMap().createMap(false);
             }
-            Map.getMap().createMap(true);
-        } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
-            Hero hero = GameDb.selectHero(MainController.pickName());
-            if (hero == null) {
-                TermGui.printError("Error while selecting a hero. Probably it wasn't created.");
-                Main.restartTheGame();
-            }
-            Map.getMap().createMap(false);
+            break;
         }
         gameCycle();
     }

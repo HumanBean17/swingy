@@ -1,13 +1,13 @@
-package com.swingy.model.helm;
+package com.swingy.model.weapon;
 
 import java.util.UUID;
 
-public class FabricHelm extends Helm {
+public class Slingshot extends Weapon {
 
-    public FabricHelm() {
+    public Slingshot() {
         this.id = UUID.randomUUID();
-        this.hitPoints = 5;
-        this.name = "Fabric helmet";
+        this.attack = 5;
+        this.name = "Slingshot";
     }
 
     @Override
@@ -21,13 +21,13 @@ public class FabricHelm extends Helm {
     }
 
     @Override
-    public Integer getHitPoints() {
-        return this.hitPoints;
+    public Integer getAttack() {
+        return this.attack;
     }
 
     @Override
-    public void setHitPoints(Integer hitPoints) {
-        this.hitPoints = hitPoints;
+    public void setAttack(Integer attack) {
+        this.attack = attack;
     }
 
     @Override

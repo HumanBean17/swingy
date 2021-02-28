@@ -13,10 +13,7 @@ import com.swingy.model.helm.IronHelm;
 import com.swingy.model.helm.Helm;
 import com.swingy.model.helm.WoodenHelm;
 import com.swingy.model.helm.CooperHelm;
-import com.swingy.model.weapon.Axe;
-import com.swingy.model.weapon.Claymore;
-import com.swingy.model.weapon.Knife;
-import com.swingy.model.weapon.Weapon;
+import com.swingy.model.weapon.*;
 import com.swingy.view.TermGui;
 
 import java.util.Random;
@@ -29,11 +26,11 @@ public class Battle {
             Hero.getHero().attack(villain);
             villain.attack(Hero.getHero());
             if (Hero.getHero().getHp() <= 0) {
-                TermGui.printMessage("Villain has " + villain.getHp() + " health points");
+                TermGui.printMessageWithFlush("Villain has " + villain.getHp() + " health points");
                 isHeroWon = false;
                 break;
             } else if (villain.getHp() <= 0) {
-                TermGui.printMessage("You've won the battle!");
+                TermGui.printMessageWithFlush("You've won the battle!");
                 Hero.getHero().addExperience(villain.getLevel() * 300 + 200);
                 Hero.getHero().setHp(Hero.getHero().getMaxHp());
                 getPrize(villain, Hero.getHero());
@@ -135,18 +132,43 @@ public class Battle {
     private static Weapon getWeaponPrize(CharacterClass characterClass, int level) {
         if (characterClass.getGameClass().equals(CharacterClass.GameClass.WARRIOR)) {
             switch (level) {
-                case 0:
-                    break;
                 case 1:
-                    return new Knife();
                 case 2:
-                    break;
+                    return new Knife();
                 case 3:
-                    return new Claymore();
                 case 4:
-                    break;
+                    return new Claymore();
                 case 5:
+                case 6:
                     return new Axe();
+                default:
+                    break;
+            }
+        } else if (characterClass.getGameClass().equals(CharacterClass.GameClass.ARCHER)) {
+            switch (level) {
+                case 1:
+                case 2:
+                    return new SmallBow();
+                case 3:
+                case 4:
+                    return new MediumBow();
+                case 5:
+                case 6:
+                    return new LargeBow();
+                default:
+                    break;
+            }
+        } else if (characterClass.getGameClass().equals(CharacterClass.GameClass.WIZARD)) {
+            switch (level) {
+                case 1:
+                case 2:
+                    return new StaffWithEnchantedGlass();
+                case 3:
+                case 4:
+                    return new StaffWithEnchantedStone();
+                case 5:
+                case 6:
+                    return new DiamondStaff();
                 default:
                     break;
             }
