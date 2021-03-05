@@ -1,12 +1,10 @@
 package com.swingy;
 
-import com.swingy.controller.ActionOnMove;
 import com.swingy.controller.MainController;
 import com.swingy.controller.MoveDirection;
 import com.swingy.db.GameDb;
 import com.swingy.gui.Coordinates;
 import com.swingy.gui.Map;
-import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Villain;
 import com.swingy.view.TermGui;
 import com.swingy.model.characters.Hero;
@@ -14,13 +12,10 @@ import com.swingy.model.characters.Hero;
 import javax.validation.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class Game {
 
     public static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-
-    private TermGui gui;
 
     private static List<Villain> enemies = new LinkedList<>();
 
@@ -40,7 +35,7 @@ public class Game {
         MoveDirection direction;
         Villain villain;
         while (Hero.getHero().isAlive()) {
-            gui.writeMap();
+            //Main.gui.writeMap();
             direction = MainController.pickMovement();
             villain = checkBattle();
             if (villain != null) {
@@ -76,8 +71,8 @@ public class Game {
     }
 
     public void run() {
+        Main.gui.drawMenu();
         MainController.HeroPick heroPick = MainController.pickHero();
-        this.gui = TermGui.createShellGui(); //TODO handle through args
         while (true) {
             if (heroPick.equals(MainController.HeroPick.CREATE)) {
                 Hero hero = Hero.createHero();
@@ -136,10 +131,6 @@ public class Game {
 
     public static List<Villain> getEnemies() {
         return enemies;
-    }
-
-    public TermGui getGui() {
-        return gui;
     }
 
     public static Coordinates getHeroLastPos() {

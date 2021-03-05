@@ -6,13 +6,6 @@ import com.swingy.model.characters.Hero;
 
 public class TermGui implements Gui {
 
-    public static TermGui shell;
-
-    public static TermGui createShellGui() {
-        shell = new TermGui();
-        return shell;
-    }
-
     public static void startBattle() {
         TermGui.flush();
         TermGui.printMessageWithFlush("YOU'VE MET A VILLAIN. WHAT ARE YOU GOING TO DO?");
@@ -117,5 +110,10 @@ public class TermGui implements Gui {
     public static void flush() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+    @Override
+    public void drawMenu() {
+
     }
 }

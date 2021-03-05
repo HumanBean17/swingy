@@ -15,7 +15,9 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.validation.ConstraintViolation;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Random;
 import java.util.Set;
@@ -53,8 +55,9 @@ public abstract class Character {
     protected CharacterClass characterClass;
 
     @Column(name = "NAME")
-    @NotNull(message = "NAME MUST NOT BE NULL")
-    @Size(min = 3, max = 10, message = "NAME SIZE MUST BE 3-10 SYMBOLS")
+    @NotBlank(message = "NAME IS EMPTY")
+    @Size(min = 3, max = 16, message = "NAME IS TOO LONG")
+    @Pattern(regexp = "[A-Za-z0-9-_]+", message = "NAME CONTAINS UNSUPPORTED CHARACTERS")
     protected String name;
 
     @Column(name = "WEAPON")
