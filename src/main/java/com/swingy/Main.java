@@ -1,5 +1,6 @@
 package com.swingy;
 
+import com.swingy.controller.MainController;
 import com.swingy.model.characters.Hero;
 import com.swingy.view.GameGui;
 import com.swingy.view.Gui;
@@ -8,6 +9,7 @@ import com.swingy.view.TermGui;
 public class Main {
 
     public static Gui gui;
+    public static final MainController controller = new MainController();
     private static String[] args;
 
     public static void restartTheGame() {

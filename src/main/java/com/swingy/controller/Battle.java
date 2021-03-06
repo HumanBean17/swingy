@@ -1,6 +1,7 @@
 package com.swingy.controller;
 
 import com.swingy.Game;
+import com.swingy.Main;
 import com.swingy.model.armor.Armor;
 import com.swingy.model.armor.IronArmor;
 import com.swingy.model.armor.WoodenArmor;
@@ -14,7 +15,6 @@ import com.swingy.model.helm.Helm;
 import com.swingy.model.helm.WoodenHelm;
 import com.swingy.model.helm.CooperHelm;
 import com.swingy.model.weapon.*;
-import com.swingy.view.TermGui;
 
 import java.util.Random;
 
@@ -26,11 +26,11 @@ public class Battle {
             Hero.getHero().attack(villain);
             villain.attack(Hero.getHero());
             if (Hero.getHero().getHp() <= 0) {
-                TermGui.printMessageWithFlush("Villain has " + villain.getHp() + " health points");
+                Main.gui.battleLost(villain);
                 isHeroWon = false;
                 break;
             } else if (villain.getHp() <= 0) {
-                TermGui.printMessageWithFlush("You've won the battle!");
+                Main.gui.battleWin();
                 Hero.getHero().addExperience(villain.getLevel() * 300 + 200);
                 Hero.getHero().setHp(Hero.getHero().getMaxHp());
                 getPrize(villain, Hero.getHero());
@@ -113,15 +113,15 @@ public class Battle {
             }
             if (weapon != null || armor != null || helm != null) {
                 if (weapon != null) {
-                    if (MainController.pickPrize(weapon.getName())) {
+                    if (Main.controller.pickPrize(weapon.getName())) {
                         hero.setWeapon(weapon);
                     }
                 } else if (armor != null) {
-                    if (MainController.pickPrize(armor.getName())) {
+                    if (Main.controller.pickPrize(armor.getName())) {
                         hero.setArmor(armor);
                     }
                 } else {
-                    if (MainController.pickPrize(helm.getName())) {
+                    if (Main.controller.pickPrize(helm.getName())) {
                         hero.setHelm(helm);
                     }
                 }

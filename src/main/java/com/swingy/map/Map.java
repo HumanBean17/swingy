@@ -1,4 +1,4 @@
-package com.swingy.gui;
+package com.swingy.map;
 
 import com.swingy.Game;
 import com.swingy.model.characters.Hero;

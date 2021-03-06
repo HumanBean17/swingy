@@ -1,8 +1,9 @@
 package com.swingy.db;
 
+import com.swingy.Main;
 import com.swingy.exception.ConnectionFailedException;
 import com.swingy.exception.PlayerNotFoundException;
-import com.swingy.gui.Coordinates;
+import com.swingy.map.Coordinates;
 import com.swingy.model.armor.*;
 import com.swingy.model.cclasses.Archer;
 import com.swingy.model.cclasses.CharacterClass;
@@ -11,11 +12,9 @@ import com.swingy.model.cclasses.Wizard;
 import com.swingy.model.characters.*;
 import com.swingy.model.helm.*;
 import com.swingy.model.weapon.*;
-import com.swingy.view.TermGui;
 
 import java.sql.*;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 public class GameDb {
 
@@ -36,7 +35,7 @@ public class GameDb {
             connection = DriverManager.getConnection(url, properties);
             updateTables();
         } catch (SQLException ex) {
-            TermGui.printError(ex.getMessage());
+            Main.gui.printMessage(ex.getMessage(), true);
         }
         return connection;
     }
@@ -76,12 +75,10 @@ public class GameDb {
     }
 
     public static Hero selectHero(String name) {
-//        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         Hero hero;
         try {
-//            connection = connectToDb();
             if (connection == null)
                 throw new ConnectionFailedException();
             updateTables();
@@ -123,12 +120,11 @@ public class GameDb {
             hero.setHp(resultSet.getInt("hp"));
             hero.setMana(resultSet.getInt("mana"));
         } catch (SQLException | NullPointerException | ConnectionFailedException | PlayerNotFoundException ex) {
-            TermGui.printError(ex.getMessage());
+            Main.gui.printMessage(ex.getMessage(), true);
             hero = null;
         } finally {
             closeResultSet(resultSet);
             closeStatement(statement);
-            //closeConnection(connection);
         }
         return hero;
     }
@@ -162,10 +158,9 @@ public class GameDb {
             statement.setString(15, hero.getName());
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            TermGui.printError(ex.getMessage());
+            Main.gui.printMessage(ex.getMessage(), true);
             isSuccess = false;
         } finally {
-            //closeConnection(connection);
             closeStatement(statement);
         }
         return isSuccess;
@@ -211,13 +206,70 @@ public class GameDb {
 
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            //TermGui.printError(ex.getMessage());
+            //Main.gui.printError(ex.getMessage());
             isSuccess = false;
         } finally {
             //closeConnection(connection);
             closeStatement(statement);
         }
         return isSuccess;
+    }
+
+    public static List<String> getHeroes() throws SQLException {
+        List<String> heroes = new LinkedList<>(); //TODO removed stub
+        heroes.add("Dima");
+        heroes.add("Oleg");
+        heroes.add("Artem");
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Hero hero;
+        try {
+            if (connection == null)
+                throw new ConnectionFailedException();
+            updateTables();
+
+            statement = connection.prepareStatement(
+                    "SELECT h.id, " +
+                            "c.x x, c.y y, " +
+                            "w.name w_name, " +
+                            "a.name a_name, " +
+                            "cc.class_name cc_name, " +
+                            "h2.name h_name, " +
+                            "h.level, h.experience, h.attack, h.defense, h.hit_points, h.max_hp, h.hp, h.mana, h.name " +
+                            "FROM hero h " +
+                            "JOIN coordinates c on h.coordinates = c.id " +
+                            "JOIN character_class cc on h.character_class = cc.id " +
+                            "JOIN weapon w on h.weapon = w.id " +
+                            "JOIN armor a on h.armor = a.id " +
+                            "JOIN helm h2 on h.helm = h2.id");
+            resultSet = statement.executeQuery();
+            while (!resultSet.next()) {
+                hero = Hero.createHero();
+                hero.setCoordinates(new Coordinates(resultSet.getInt("x"), resultSet.getInt("y")));
+                hero.setWeapon(retrieveWeapon(resultSet));
+                hero.setArmor(retrieveArmor(resultSet));
+                hero.setCharacterClass(retrieveCharacterClass(resultSet));
+                hero.setHelm(retrieveHelm(resultSet));
+                hero.setName(resultSet.getString("name"));
+                hero.setLevel(resultSet.getInt("level"));
+                hero.setExperience(resultSet.getInt("experience"));
+                hero.setAttack(resultSet.getInt("attack"));
+                hero.setDefense(resultSet.getInt("defense"));
+                hero.setHitPoints(resultSet.getInt("hit_points"));
+                hero.setMaxHp(resultSet.getInt("max_hp"));
+                hero.setHp(resultSet.getInt("hp"));
+                hero.setMana(resultSet.getInt("mana"));
+
+                //heroes.add(hero);
+            }
+        } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
+            Main.gui.printMessage(ex.getMessage(), true);
+            hero = null;
+        } finally {
+            closeResultSet(resultSet);
+            closeStatement(statement);
+        }
+        return heroes;
     }
 
     private static UUID updateHelm(Helm helm) throws SQLException {

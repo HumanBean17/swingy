@@ -1,9 +1,8 @@
 package com.swingy.model.characters;
 
-import com.swingy.Game;
-import com.swingy.controller.MainController;
-import com.swingy.gui.Coordinates;
-import com.swingy.gui.Map;
+import com.swingy.Main;
+import com.swingy.map.Coordinates;
+import com.swingy.map.Map;
 import com.swingy.model.armor.ClothArmor;
 import com.swingy.model.cclasses.Archer;
 import com.swingy.model.cclasses.CharacterClass;
@@ -20,7 +19,6 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.Validator;
 
 @Getter
 @Setter
@@ -55,7 +53,7 @@ public class Hero extends Character {
         hero.maxHp = 100;
         hero.hp = 100;
         hero.pickName();
-        if (!validate()) {
+        if (!validate(true)) {
             hero = null;
             return null;
         }
@@ -89,11 +87,11 @@ public class Hero extends Character {
     }
 
     public void pickName() {
-        this.name = MainController.pickName();
+        this.name = Main.controller.pickName();
     }
 
     public void pickClass() {
-        CharacterClass.GameClass chosenClass = MainController.pickClass();
+        CharacterClass.GameClass chosenClass = Main.controller.pickClass();
         if (chosenClass.equals(CharacterClass.GameClass.WARRIOR)) {
             createWarrior();
         } else if (chosenClass.equals(CharacterClass.GameClass.WIZARD)) {

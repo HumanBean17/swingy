@@ -1,23 +1,27 @@
 package com.swingy.controller;
 
 import com.swingy.Game;
-import com.swingy.gui.Map;
+import com.swingy.Main;
+import com.swingy.map.Map;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
-import com.swingy.view.TermGui;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 public class MainController {
 
+    public volatile static Queue<String> guiActions = new LinkedList<>();
+
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static boolean battleHandler(Villain villain) {
+    public boolean battleHandler(Villain villain) {
         String userInput;
         boolean isHeroWon = true;
         while (true) {
-            TermGui.startBattle();
+            Main.gui.startBattle();
             userInput = scanner.next().toLowerCase();
             if (userInput.startsWith("f") || userInput.startsWith("r"))
                 break;
@@ -25,13 +29,13 @@ public class MainController {
         if (userInput.startsWith("f") || (userInput.startsWith("r") && !Battle.run()))
             isHeroWon = Battle.startBattle(villain);
         if (!isHeroWon)
-            TermGui.playerDied();
+            Main.gui.playerDied();
         return isHeroWon;
     }
 
     public static MoveDirection pickMovement() {
         Hero hero = Hero.getHero();
-        TermGui.pickMovement();
+        Main.gui.pickMovement();
         String userInput = scanner.next().toLowerCase();
         MoveDirection direction = MoveDirection.NULL;
         Game.setHeroLastPos(hero.getCoordinates());
@@ -56,32 +60,44 @@ public class MainController {
         } else if (userInput.startsWith("d")) {
             direction = MoveDirection.BORDER;
         } else if (userInput.startsWith("i")) {
-            TermGui.info(hero);
-        } else if (userInput.startsWith("e")) {
-
+            Main.gui.info(hero);
         }
         return direction;
     }
 
-    public static HeroPick pickHero() {
-        while (true) {
-            TermGui.pickHero();
-            String userInput = scanner.next().toLowerCase();
-            if (userInput.startsWith("c"))
+    public HeroPick menu() {
+        if (!Main.gui.isGui()) {
+            while (true) {
+                System.out.println("here");
+                Main.gui.drawMenu();
+                String userInput = scanner.next().toLowerCase();
+                if (userInput.startsWith("cre"))
+                    return HeroPick.CREATE;
+                else if (userInput.startsWith("sel"))
+                    return HeroPick.SELECT;
+            }
+        } else {
+            System.out.println("before draw");
+            Main.gui.drawMenu();
+            System.out.println("after draw");
+            String action = guiActions.peek();
+            System.out.println("action chosen");
+            if (action.equals("create"))
                 return HeroPick.CREATE;
-            else if (userInput.startsWith("s"))
+            else if (action.equals("select"))
                 return HeroPick.SELECT;
         }
+        return HeroPick.SELECT;
     }
 
-    public static String pickName() {
-        TermGui.pickName();
+    public String pickName() {
+        Main.gui.pickName();
         return scanner.next();
     }
 
-    public static CharacterClass.GameClass pickClass() {
+    public CharacterClass.GameClass pickClass() {
         while (true) {
-            TermGui.pickClass();
+            Main.gui.pickClass();
             String userInput = scanner.next().toLowerCase();
             if (userInput.startsWith("wa")) {
                 return CharacterClass.GameClass.WARRIOR;
@@ -93,9 +109,9 @@ public class MainController {
         }
     }
 
-    public static boolean pickPrize(String prizeName) {
+    public boolean pickPrize(String prizeName) {
         while (true) {
-            TermGui.pickPrize(prizeName);
+            Main.gui.pickPrize(prizeName);
             String userInput = scanner.next().toLowerCase();
             if (userInput.startsWith("y")) {
                 return true;

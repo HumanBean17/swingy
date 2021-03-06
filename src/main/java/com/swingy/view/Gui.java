@@ -1,64 +1,64 @@
 package com.swingy.view;
 
+import com.swingy.model.cclasses.CharacterClass;
+import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Hero;
-
-import javax.swing.*;
+import com.swingy.model.characters.Villain;
 
 public interface Gui {
 
-    public static void startBattle() { throw new RuntimeException(); }
+    boolean isGui();
 
-    public static void playerDied() {
-        throw new RuntimeException();
-    }
+    void validationError(String message);
 
-    public static void pickMovement() {
-        throw new RuntimeException();
-    }
+    void takeDamage(CharacterClass characterClass, String name, int takenDamage, int hp);
 
-    public static void pickGameMode() {
-        throw new RuntimeException();
-    }
+    void attack(CharacterClass characterClass, String name, Character enemy, int damage);
 
-    public static void pickHero() {
-        throw new RuntimeException();
-    }
+    void criticalDamage();
 
-    public static void pickName() {
-        throw new RuntimeException();
-    }
+    void miss(CharacterClass characterClass, String name);
 
-    public static void pickPrize(String prizeName) {
-        throw new RuntimeException();
-    }
+    void enemyFreeze(CharacterClass characterClass, String name);
 
-    public static void info(Hero hero) {
-        throw new RuntimeException();
-    }
+    void battleWin();
 
-    public static void printError(String message) {
-        throw new RuntimeException();
-    }
+    void battleLost(Villain villain);
 
-    public static void printMessageWithoutFlash(String message) {
-        throw new RuntimeException();
-    }
+     void startBattle();
 
-    public static void printMessageWithFlush(String message) {
-        throw new RuntimeException();
-    }
+     void playerDied();
 
-    public static void pickClass() {
-        throw new RuntimeException();
-    }
+     void pickMovement();
 
-    public static void writeMap() {
-        throw new RuntimeException();
-    }
+     void pickGameMode();
 
-    public static void flush() {
-        throw new RuntimeException();
-    }
+     void pickHero();
 
-    public void drawMenu();
+     void pickName();
+
+     void pickPrize(String prizeName);
+
+     void levelUpMessage();
+
+     void gameFinishedMessage();
+
+     void selectHeroError();
+
+     void saveHeroToDbError();
+
+     void info(Hero hero);
+
+     void pickClass();
+
+     void writeMap();
+
+    void flush();
+
+    void printMessage(String message, boolean flush);
+
+    void drawMenu();
+
+    void drawHello();
+
 }
