@@ -68,45 +68,57 @@ public class MainController {
     public HeroPick menu() {
         if (!Main.gui.isGui()) {
             while (true) {
-                System.out.println("here");
                 Main.gui.drawMenu();
-                String userInput = scanner.next().toLowerCase();
-                if (userInput.startsWith("cre"))
-                    return HeroPick.CREATE;
-                else if (userInput.startsWith("sel"))
-                    return HeroPick.SELECT;
+                HeroPick action = heroPickCondition(scanner.next().toLowerCase());
+                if (action != null)
+                    return action;
             }
         } else {
-            System.out.println("before draw");
             Main.gui.drawMenu();
-            System.out.println("after draw");
-            String action = guiActions.peek();
-            System.out.println("action chosen");
-            if (action.equals("create"))
-                return HeroPick.CREATE;
-            else if (action.equals("select"))
-                return HeroPick.SELECT;
+            return heroPickCondition(guiActions.remove());
         }
-        return HeroPick.SELECT;
+    }
+
+    private HeroPick heroPickCondition(String userInput) {
+        if (userInput.startsWith("cre"))
+            return HeroPick.CREATE;
+        else if (userInput.startsWith("sel"))
+            return HeroPick.SELECT;
+        return null;
     }
 
     public String pickName() {
         Main.gui.pickName();
-        return scanner.next();
+        if (!Main.gui.isGui())
+            return scanner.next();
+        System.out.println(guiActions);
+        return guiActions.remove();
     }
 
     public CharacterClass.GameClass pickClass() {
-        while (true) {
-            Main.gui.pickClass();
-            String userInput = scanner.next().toLowerCase();
-            if (userInput.startsWith("wa")) {
-                return CharacterClass.GameClass.WARRIOR;
-            } else if (userInput.startsWith("wi")) {
-                return CharacterClass.GameClass.WIZARD;
-            } else if (userInput.startsWith("a")) {
-                return CharacterClass.GameClass.ARCHER;
+        if (!Main.gui.isGui()) {
+            while (true) {
+                Main.gui.pickClass();
+                CharacterClass.GameClass gameClass = pickClassCondition(scanner.next().toLowerCase());
+                if (gameClass != null)
+                    return gameClass;
             }
+        } else {
+            Main.gui.pickClass();
+            System.out.println(guiActions);
+            return pickClassCondition(guiActions.remove());
         }
+    }
+
+    private CharacterClass.GameClass pickClassCondition(String userInput) {
+        if (userInput.startsWith("war")) {
+            return CharacterClass.GameClass.WARRIOR;
+        } else if (userInput.startsWith("wiz")) {
+            return CharacterClass.GameClass.WIZARD;
+        } else if (userInput.startsWith("arc")) {
+            return CharacterClass.GameClass.ARCHER;
+        }
+        return null;
     }
 
     public boolean pickPrize(String prizeName) {

@@ -113,8 +113,8 @@ public class TermGui implements Gui {
 
     public void pickClass() {
         this.printMessage("> WARRIOR (chance of critical damage)\n" +
-                "> WIZARD (chance of freeze enemy)\n" +
-                " ARCHER (chance of miss, but less more damage)\n> ", true);
+                "> WIZARD (chance to freeze enemy)\n" +
+                " ARCHER (chance of miss, but more damage)\n> ", true);
     }
 
     @Override

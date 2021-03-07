@@ -1,5 +1,6 @@
 package com.swingy.view;
 
+import com.swingy.Main;
 import com.swingy.controller.MainController;
 import com.swingy.db.GameDb;
 import com.swingy.model.cclasses.CharacterClass;
@@ -7,10 +8,14 @@ import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -27,11 +32,65 @@ public class GameGui extends JFrame implements Gui {
 
     public GameGui() {
         super("Swingy");
+        this.setFont(new Font("Courier", Font.PLAIN, 16));
         this.setSize(WIDTH, HEIGHT);
         this.setResizable(false);
-        this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(null);
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+    }
+
+    @Override
+    public void pickClass() {
+        loop = true;
+        flush();
+
+        this.setLayout(new GridBagLayout());
+
+        JButton warriorButton = new JButton("WARRIOR");
+        JButton wizardButton = new JButton("WIZARD");
+        JButton archerButton = new JButton("ARCHER");
+
+        warriorButton.addActionListener(new ChooseWarriorButtonListener());
+        wizardButton.addActionListener(new ChooseWizardButtonListener());
+        archerButton.addActionListener(new ChooseArcherButtonListener());
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        JLabel warriorLabel = new JLabel("critical damage");
+        warriorLabel.setForeground(Color.BLUE);
+        JLabel wizardLabel = new JLabel("freeze enemy");
+        wizardLabel.setForeground(Color.BLUE);
+        JLabel archerLabel = new JLabel("more damage");
+        archerLabel.setForeground(Color.BLUE);
+
+        c.gridx = 0;
+        this.add(warriorButton, c);
+        c.gridx = 1;
+        this.add(Box.createHorizontalStrut(25), c);
+        c.gridx = 2;
+        this.add(wizardButton, c);
+        c.gridx = 3;
+        this.add(Box.createHorizontalStrut(25), c);
+        c.gridx = 4;
+        this.add(archerButton, c);
+
+        c.gridx = 0;
+        c.gridy = 1;
+        this.add(warriorLabel, c);
+        c.gridx = 1;
+        this.add(Box.createHorizontalStrut(50), c);
+        c.gridx = 2;
+        this.add(wizardLabel, c);
+        c.gridx = 3;
+        this.add(Box.createHorizontalStrut(50), c);
+        c.gridx = 4;
+        this.add(archerLabel, c);
+
+        this.setVisible(true);
+        this.repaint();
+        actionOnPerformedLoop();
     }
 
     @Override
@@ -47,15 +106,16 @@ public class GameGui extends JFrame implements Gui {
         textField.setBounds(WIDTH / 2 - 75, HEIGHT - 150, 150, 30);
 
         label = new JLabel();
-        label.setBounds(WIDTH / 2 + 75, HEIGHT - 150, 300, 30);
+        label.setBounds(WIDTH / 2 - 140, HEIGHT - 200, 500, 30);
         label.setForeground(Color.red);
 
-        add(chooseName);
-        add(label);
-        add(textField);
+        this.add(chooseName);
+        this.add(label);
+        this.add(textField);
 
+        this.setVisible(true);
+        this.repaint();
         actionOnPerformedLoop();
-        //repaint();
     }
 
     @Override
@@ -88,6 +148,7 @@ public class GameGui extends JFrame implements Gui {
         this.add(selectButton);
 
         this.setVisible(true);
+        this.repaint();
         actionOnPerformedLoop();
     }
 
@@ -109,6 +170,7 @@ public class GameGui extends JFrame implements Gui {
         this.add(continueButton);
 
         this.setVisible(true);
+        this.repaint();
         actionOnPerformedLoop();
     }
 
@@ -208,16 +270,14 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void saveHeroToDbError() {
-
+        JOptionPane.showMessageDialog(null,
+                "ERROR WHILE SAVING HERO TO DATABASE. GAME PROGRESS WILL NOT BE SAVED AFTER EXIT THE GAME.",
+                "Error info",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
     public void info(Hero hero) {
-
-    }
-
-    @Override
-    public void pickClass() {
 
     }
 
@@ -228,7 +288,6 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void flush() {
-        this.setVisible(false);
         this.getContentPane().removeAll();
         this.repaint();
     }
@@ -246,14 +305,39 @@ public class GameGui extends JFrame implements Gui {
         return loop;
     }
 
+    private class ChooseArcherButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loop = false;
+            MainController.guiActions.add("archer");
+        }
+    }
+
+    private class ChooseWizardButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loop = false;
+            MainController.guiActions.add("wizard");
+        }
+    }
+
+    private class ChooseWarriorButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loop = false;
+            MainController.guiActions.add("warrior");
+        }
+    }
+
     private class ChooseNameButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             Hero.getHero().setName(textField.getText());
             if (Hero.validate(false)) {
                 loop = false;
+                MainController.guiActions.add(textField.getText());
             } else {
-                label.setText("Name must be 3-16 characters and contain only A-z; 0-9 symbols!");
+                label.setText("Name must be 3-16 characters A-z;0-9 symbols!");
             }
         }
     }
@@ -262,7 +346,6 @@ public class GameGui extends JFrame implements Gui {
         @Override
         public void actionPerformed(ActionEvent e) {
             MainController.guiActions.add("create");
-            System.out.println("create performed");
             setLoop(false);
         }
     }
