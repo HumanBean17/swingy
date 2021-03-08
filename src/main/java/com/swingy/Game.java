@@ -34,7 +34,7 @@ public class Game {
         MoveDirection direction;
         Villain villain;
         while (Hero.getHero().isAlive()) {
-            //Main.gui.writeMap();
+            Main.gui.writeMap();
             direction = Main.controller.pickMovement();
             villain = checkBattle();
             if (villain != null) {

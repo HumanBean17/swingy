@@ -1,21 +1,17 @@
 package com.swingy.view;
 
-import com.swingy.Main;
 import com.swingy.controller.MainController;
 import com.swingy.db.GameDb;
+import com.swingy.map.Map;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -23,6 +19,8 @@ public class GameGui extends JFrame implements Gui {
 
     private volatile JTextField textField;
     private volatile JLabel label;
+
+    private final Font buttonFont = new Font("Courier", Font.PLAIN, 14);
 
     private volatile boolean loop = false;
     public final boolean isGui = true;
@@ -41,6 +39,77 @@ public class GameGui extends JFrame implements Gui {
         this.setVisible(true);
     }
 
+    private JTextArea getMapArea() {
+        String mapString = "";
+        Map map = Map.getMap();
+        Hero hero = Hero.getHero();
+        for (int i = 0; i < Map.getMap().getSize(); ++i) {
+            mapString = mapString.concat("  ");
+            for (int j = 0; j < map.getSize(); ++j) {
+                if (hero.getCoordinates().getY() == j && hero.getCoordinates().getY() == i)
+                    mapString = mapString.concat("P    ");
+                else
+                    mapString = mapString.concat(map.getMapCell(i, j) + "    ");
+            }
+            mapString = mapString.concat("\n");
+        }
+        return new JTextArea(mapString);
+    }
+
+    @Override
+    public void writeMap() {
+        loop = true;
+        flush();
+
+        this.setLayout(new GridBagLayout());
+
+        JButton upButton = new JButton("up");
+        upButton.setFont(buttonFont);
+        JButton downButton = new JButton("down");
+        downButton.setFont(buttonFont);
+        JButton leftButton = new JButton("left");
+        leftButton.setFont(buttonFont);
+        JButton rightButton = new JButton("right");
+        rightButton.setFont(buttonFont);
+
+        JTextArea mapArea = getMapArea();
+
+        upButton.addActionListener(e -> {
+            loop = false;
+            MainController.guiActions.add("up");
+        });
+        downButton.addActionListener(e -> {
+            loop = false;
+            MainController.guiActions.add("down");
+        });
+        leftButton.addActionListener(e -> {
+            loop = false;
+            MainController.guiActions.add("left");
+        });
+        rightButton.addActionListener(e -> {
+            loop = false;
+            MainController.guiActions.add("right");
+        });
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.gridx = 1;
+        this.add(mapArea, c);
+        c.gridy = 1;
+        this.add(upButton, c);
+        c.gridx = 0;
+        c.gridy = 2;
+        this.add(leftButton, c);
+        c.gridx = 1;
+        this.add(downButton, c);
+        c.gridx = 2;
+        this.add(rightButton, c);
+
+        this.setVisible(true);
+        this.repaint();
+        actionOnPerformedLoop();
+    }
+
     @Override
     public void pickClass() {
         loop = true;
@@ -52,9 +121,21 @@ public class GameGui extends JFrame implements Gui {
         JButton wizardButton = new JButton("WIZARD");
         JButton archerButton = new JButton("ARCHER");
 
-        warriorButton.addActionListener(new ChooseWarriorButtonListener());
-        wizardButton.addActionListener(new ChooseWizardButtonListener());
-        archerButton.addActionListener(new ChooseArcherButtonListener());
+        warriorButton.addActionListener(e -> {
+            loop = false;
+            MainController.guiActions.add("warrior");
+            System.out.println(MainController.guiActions);
+        });
+        wizardButton.addActionListener(e -> {
+            loop = false;
+            MainController.guiActions.add("wizard");
+            System.out.println(MainController.guiActions);
+        });
+        archerButton.addActionListener(e -> {
+            loop = false;
+            MainController.guiActions.add("archer");
+            System.out.println(MainController.guiActions);
+        });
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -98,20 +179,34 @@ public class GameGui extends JFrame implements Gui {
         flush();
         loop = true;
 
-        JButton chooseName = new JButton("Choose name");
-        chooseName.addActionListener(new ChooseNameButtonListener());
-        chooseName.setBounds(WIDTH / 2 - 75, HEIGHT - 100, 150, 30);
+        this.setLayout(new GridBagLayout());
 
-        textField = new JTextField();
-        textField.setBounds(WIDTH / 2 - 75, HEIGHT - 150, 150, 30);
+        JButton chooseNameButton = new JButton("Choose name");
+        chooseNameButton.setFont(buttonFont);
+        chooseNameButton.addActionListener(new ChooseNameButtonListener());
+//        chooseName.setBounds(WIDTH / 2 - 75, HEIGHT - 100, 150, 30);
+
+        textField = new JTextField(16);
+//        textField.setSize(150, 30);
+//        textField.setBounds(WIDTH / 2 - 75, HEIGHT - 150, 150, 30);
 
         label = new JLabel();
-        label.setBounds(WIDTH / 2 - 140, HEIGHT - 200, 500, 30);
+        label.setFocusable(false);
+        label.setMinimumSize(new Dimension(500, 30));
+//        label.setSize(500, 30);
+//        label.setBounds(WIDTH / 2 - 140, HEIGHT - 200, 500, 30);
         label.setForeground(Color.red);
 
-        this.add(chooseName);
-        this.add(label);
-        this.add(textField);
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.gridx = 1;
+        c.gridy = 2;
+        this.add(chooseNameButton, c);
+        c.gridx = 1;
+        c.gridy = 0;
+        this.add(label, c);
+        c.gridy = 1;
+        this.add(textField, c);
 
         this.setVisible(true);
         this.repaint();
@@ -124,7 +219,7 @@ public class GameGui extends JFrame implements Gui {
         loop = true;
 
         JComboBox<String> comboBox = new JComboBox<>();
-        comboBox.setFont(new Font("Courier", Font.PLAIN, 16));
+        comboBox.setFont(buttonFont);
         comboBox.setBounds(WIDTH / 2 - 65, HEIGHT - 300, 130, 150);
         try {
             List<String> heroes = GameDb.getHeroes();
@@ -133,13 +228,13 @@ public class GameGui extends JFrame implements Gui {
             }
         } catch (SQLException ignored) { }
 
-        JButton selectButton = new JButton("SELECT");
-        selectButton.setFont(new Font("Courier", Font.PLAIN, 16));
+        JButton selectButton = new JButton("Select");
+        selectButton.setFont(buttonFont);
         selectButton.addActionListener(new SelectHeroButtonListener());
         selectButton.setBounds(WIDTH - 400, HEIGHT - 100, 100, 30);
 
-        JButton createButton = new JButton("CREATE");
-        createButton.setFont(new Font("Courier", Font.PLAIN, 16));
+        JButton createButton = new JButton("Create");
+        createButton.setFont(buttonFont);
         createButton.addActionListener(new CreateHeroButtonListener());
         createButton.setBounds(WIDTH - 200, HEIGHT - 100, 100, 30);
 
@@ -162,7 +257,7 @@ public class GameGui extends JFrame implements Gui {
         swingyLabel.setBounds(WIDTH / 2 - 65, HEIGHT - 300, 130, 150);
 
         JButton continueButton = new JButton("Continue");
-        continueButton.setFont(new Font("Courier", Font.PLAIN, 16));
+        continueButton.setFont(buttonFont);
         continueButton.addActionListener(new ContinueButtonListener());
         continueButton.setBounds(WIDTH / 2 - 100, HEIGHT - 100, 200, 30);
 
@@ -282,11 +377,6 @@ public class GameGui extends JFrame implements Gui {
     }
 
     @Override
-    public void writeMap() {
-
-    }
-
-    @Override
     public void flush() {
         this.getContentPane().removeAll();
         this.repaint();
@@ -303,30 +393,6 @@ public class GameGui extends JFrame implements Gui {
 
     public boolean isLoop() {
         return loop;
-    }
-
-    private class ChooseArcherButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            loop = false;
-            MainController.guiActions.add("archer");
-        }
-    }
-
-    private class ChooseWizardButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            loop = false;
-            MainController.guiActions.add("wizard");
-        }
-    }
-
-    private class ChooseWarriorButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            loop = false;
-            MainController.guiActions.add("warrior");
-        }
     }
 
     private class ChooseNameButtonListener implements ActionListener {
