@@ -19,6 +19,7 @@ public class GameGui extends JFrame implements Gui {
 
     private volatile JTextField textField;
     private volatile JLabel label;
+    private volatile String battleString;
 
     private final Font buttonFont = new Font("Courier", Font.PLAIN, 14);
 
@@ -39,21 +40,37 @@ public class GameGui extends JFrame implements Gui {
         this.setVisible(true);
     }
 
-    private JTextArea getMapArea() {
-        String mapString = "";
-        Map map = Map.getMap();
-        Hero hero = Hero.getHero();
+    private JLabel getMapArea() {
+        String mapString = "<html><body><pre>";
+        mapString += ("<br>");
         for (int i = 0; i < Map.getMap().getSize(); ++i) {
-            mapString = mapString.concat("  ");
-            for (int j = 0; j < map.getSize(); ++j) {
-                if (hero.getCoordinates().getY() == j && hero.getCoordinates().getY() == i)
-                    mapString = mapString.concat("P    ");
-                else
-                    mapString = mapString.concat(map.getMapCell(i, j) + "    ");
+            for (int j = 0; j < Map.getMap().getSize(); ++j) {
+                if (Hero.getHero().getCoordinates().getY() == i &&
+                        Hero.getHero().getCoordinates().getX() == j) {
+                    mapString += ("H   ");
+                }
+                else {
+                    mapString += (Map.getMap().getMapCell(i, j) + "   ");
+                }
             }
-            mapString = mapString.concat("\n");
+            mapString += ("<br>");
         }
-        return new JTextArea(mapString);
+        mapString += ("<br></pre></body></html>");
+        JLabel mapLabel = new JLabel(mapString);
+        mapLabel.setFocusable(false);
+        return mapLabel;
+    }
+
+    @Override
+    public void startBattle() {
+        if (JOptionPane.showConfirmDialog(null,
+                "YOU'VE MET A VILLAIN. WHAT ARE YOU GOING TO DO?\n> FIGHT\n> RUN\n> ",
+                "Start Battle",
+                JOptionPane.YES_NO_OPTION) == 1) {
+            MainController.guiActions.add("fight");
+        } else {
+            MainController.guiActions.add("run");
+        }
     }
 
     @Override
@@ -72,7 +89,7 @@ public class GameGui extends JFrame implements Gui {
         JButton rightButton = new JButton("right");
         rightButton.setFont(buttonFont);
 
-        JTextArea mapArea = getMapArea();
+        JLabel mapArea = getMapArea();
 
         upButton.addActionListener(e -> {
             loop = false;
@@ -285,42 +302,39 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void takeDamage(CharacterClass characterClass, String name, int takenDamage, int hp) {
-
+        battleString += characterClass.getGameClass() + " " + name + " takes damage " +
+                takenDamage + " and has " + hp + " health points";
     }
 
     @Override
     public void attack(CharacterClass characterClass, String name, Character enemy, int damage) {
-
+        battleString += characterClass.getGameClass() + " '" + name + "' attacks " +
+                enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage;
     }
 
     @Override
     public void criticalDamage() {
-
+        battleString += "CRITICAL DAMAGE";
     }
 
     @Override
     public void miss(CharacterClass characterClass, String name) {
-
+        battleString += characterClass.getGameClass() + " '" + name + "' misses";
     }
 
     @Override
     public void enemyFreeze(CharacterClass characterClass, String name) {
-
+        battleString += "ENEMY WAS FROZEN BY " + characterClass.getGameClass() + " '" + name + "'";
     }
 
     @Override
     public void battleWin() {
-
+        battleString += "You've won the battle!";
     }
 
     @Override
     public void battleLost(Villain villain) {
-
-    }
-
-    @Override
-    public void startBattle() {
-
+        battleString += "Villain has " + villain.getHp() + " health points";
     }
 
     @Override

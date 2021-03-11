@@ -20,23 +20,38 @@ public class MainController {
     public boolean battleHandler(Villain villain) {
         String userInput;
         boolean isHeroWon = true;
-        while (true) {
+        if (Main.gui.isGui()) {
+            while (true) {
+                Main.gui.startBattle();
+                userInput = scanner.next().toLowerCase();
+                if (userInput.startsWith("f") || userInput.startsWith("r"))
+                    break;
+            }
+            if (userInput.startsWith("f") || (userInput.startsWith("r") && !Battle.run()))
+                isHeroWon = Battle.startBattle(villain);
+            if (!isHeroWon)
+                Main.gui.playerDied();
+        } else {
             Main.gui.startBattle();
-            userInput = scanner.next().toLowerCase();
-            if (userInput.startsWith("f") || userInput.startsWith("r"))
-                break;
+            String action = guiActions.remove();
+            if (action.equals("fight") || action.equals("run")) {
+                isHeroWon = Battle.startBattle(villain);
+            }
+            if (!isHeroWon)
+                Main.gui.playerDied();
         }
-        if (userInput.startsWith("f") || (userInput.startsWith("r") && !Battle.run()))
-            isHeroWon = Battle.startBattle(villain);
-        if (!isHeroWon)
-            Main.gui.playerDied();
         return isHeroWon;
     }
 
     public static MoveDirection pickMovement() {
         Hero hero = Hero.getHero();
         Main.gui.pickMovement();
-        String userInput = scanner.next().toLowerCase();
+        String userInput;
+        if (!Main.gui.isGui()) {
+            userInput = scanner.next().toLowerCase();
+        } else {
+            userInput = guiActions.remove();
+        }
         MoveDirection direction = MoveDirection.NULL;
         Game.setHeroLastPos(hero.getCoordinates());
         if (userInput.startsWith("r") && ((hero.getCoordinates().getX() + 1) < Map.getMap().getSize())) {
