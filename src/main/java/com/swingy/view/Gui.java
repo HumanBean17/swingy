@@ -5,6 +5,8 @@ import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
 
+import java.util.List;
+
 public interface Gui {
 
     boolean isGui();
@@ -33,25 +35,21 @@ public interface Gui {
 
      void pickMovement();
 
-     void pickGameMode();
-
-     void pickHero();
-
      void pickName();
 
+     void pickClass();
+
      void pickPrize(String prizeName);
+
+     void pickHero(List<Hero> heroes);
 
      void levelUpMessage();
 
      void gameFinishedMessage();
 
-     void selectHeroError();
-
      void printErrorMessage(String message, boolean flush);
 
      void info(Hero hero);
-
-     void pickClass();
 
      void writeMap();
 

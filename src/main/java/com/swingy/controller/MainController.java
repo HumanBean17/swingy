@@ -2,12 +2,15 @@ package com.swingy.controller;
 
 import com.swingy.Game;
 import com.swingy.Main;
+import com.swingy.db.GameDb;
 import com.swingy.map.Map;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -107,11 +110,26 @@ public class MainController {
         return null;
     }
 
+    public Hero pickHero(List<Hero> heroes) {
+        if (!Main.gui.isGui()) {
+            while (true) {
+                Main.gui.pickHero(heroes);
+                String userInput = scanner.next();
+                for (Hero hero : heroes) {
+                    if (hero.getName().equals(userInput)) {
+                        return hero;
+                    }
+                }
+            }
+        } else {
+            //String
+        }
+    }
+
     public String pickName() {
         Main.gui.pickName();
         if (!Main.gui.isGui())
             return scanner.next();
-        System.out.println(guiActions);
         return guiActions.remove();
     }
 
@@ -125,7 +143,6 @@ public class MainController {
             }
         } else {
             Main.gui.pickClass();
-            System.out.println(guiActions);
             return pickClassCondition(guiActions.remove());
         }
     }
@@ -142,14 +159,20 @@ public class MainController {
     }
 
     public boolean pickPrize(String prizeName) {
-        while (true) {
-            Main.gui.pickPrize(prizeName);
-            String userInput = scanner.next().toLowerCase();
-            if (userInput.startsWith("y")) {
-                return true;
-            } else if (userInput.startsWith("n")) {
-                return false;
+        if (!Main.gui.isGui()) {
+            while (true) {
+                Main.gui.pickPrize(prizeName);
+                String userInput = scanner.next().toLowerCase();
+                if (userInput.startsWith("y")) {
+                    return true;
+                } else if (userInput.startsWith("n")) {
+                    return false;
+                }
             }
+        } else {
+            Main.gui.pickPrize(prizeName);
+            String userInput = MainController.guiActions.remove();
+            return userInput.equals("yes");
         }
     }
 

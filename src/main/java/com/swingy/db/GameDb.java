@@ -215,11 +215,11 @@ public class GameDb {
         return isSuccess;
     }
 
-    public static List<String> getHeroes() throws SQLException {
-        List<String> heroes = new LinkedList<>(); //TODO removed stub
-        heroes.add("Dima");
-        heroes.add("Oleg");
-        heroes.add("Artem");
+    public static List<Hero> getHeroes() throws SQLException {
+        List<Hero> heroes = new LinkedList<>(); //TODO removed stub
+//        heroes.add("Dima");
+//        heroes.add("Oleg");
+//        heroes.add("Artem");
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         Hero hero;
@@ -259,12 +259,10 @@ public class GameDb {
                 hero.setMaxHp(resultSet.getInt("max_hp"));
                 hero.setHp(resultSet.getInt("hp"));
                 hero.setMana(resultSet.getInt("mana"));
-
-                //heroes.add(hero);
+                heroes.add(hero);
             }
         } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
             Main.gui.printErrorMessage(ex.getMessage(), true);
-            hero = null;
         } finally {
             closeResultSet(resultSet);
             closeStatement(statement);

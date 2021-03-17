@@ -9,6 +9,7 @@ import com.swingy.model.characters.Villain;
 import com.swingy.model.characters.Hero;
 
 import javax.validation.*;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,6 +72,12 @@ public class Game {
         Main.gui.drawHello();
         MainController.HeroPick heroPick = Main.controller.menu();
         while (true) {
+            List<Hero> heroes = new LinkedList<>();
+            try {
+                heroes.addAll(GameDb.getHeroes());
+            } catch (SQLException ex) {
+                Main.gui.printErrorMessage(ex.getMessage(), true);
+            }
             if (heroPick.equals(MainController.HeroPick.CREATE)) {
                 Hero hero = Hero.createHero();
                 if (hero == null) {
@@ -80,15 +87,18 @@ public class Game {
                     Main.gui.printErrorMessage("ERROR WHILE SAVING HERO TO DATABASE. GAME PROGRESS WILL NOT BE SAVED AFTER EXIT THE GAME.", true);
                 }
                 Map.getMap().createMap(true);
+                break;
             } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
-                Hero hero = GameDb.selectHero(Main.controller.pickName());
+                Hero hero = Main.controller.pickHero(heroes);
                 if (hero == null) {
-                    Main.gui.selectHeroError();
+                    Main.gui.printErrorMessage("Error while selecting a hero.", true);
                     Main.restartTheGame();
                 }
                 Map.getMap().createMap(false);
+                break;
+            } else if (heroes.isEmpty()) {
+                Main.gui.printErrorMessage("NO SAVED HEROES FOUND.", true);
             }
-            break;
         }
         gameCycle();
     }

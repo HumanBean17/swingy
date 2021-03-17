@@ -7,7 +7,6 @@ import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
-import jdk.nashorn.internal.scripts.JO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +56,7 @@ public class GameGui extends JFrame implements Gui {
         battleTextArea.setLineWrap(true);
 
         JScrollPane scroll = new JScrollPane(battleTextArea,
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         JPanel panel = new JPanel();
@@ -96,7 +95,6 @@ public class GameGui extends JFrame implements Gui {
                 "YOU'VE MET A VILLAIN. FIGHT?",
                 "Start Battle",
                 JOptionPane.YES_NO_OPTION);
-        System.out.println("here");
         if (reply == JOptionPane.YES_OPTION) {
             MainController.guiActions.add("fight");
         } else {
@@ -266,19 +264,23 @@ public class GameGui extends JFrame implements Gui {
         flush();
         loop = true;
 
-        JComboBox<String> comboBox = new JComboBox<>();
+        JComboBox<Hero> comboBox = new JComboBox<>();
         comboBox.setFont(buttonFont);
         comboBox.setBounds(WIDTH / 2 - 65, HEIGHT - 300, 130, 150);
         try {
-            List<String> heroes = GameDb.getHeroes();
-            for (String hero : heroes) {
+            List<Hero> heroes = GameDb.getHeroes();
+            for (Hero hero : heroes) {
                 comboBox.addItem(hero);
             }
         } catch (SQLException ignored) { }
 
         JButton selectButton = new JButton("Select");
         selectButton.setFont(buttonFont);
-        selectButton.addActionListener(new SelectHeroButtonListener());
+        selectButton.addActionListener(e -> {
+            MainController.guiActions.add(String.valueOf(comboBox.getSelectedItem()));
+            MainController.guiActions.add("select");
+            setLoop(false);
+        });
         selectButton.setBounds(WIDTH - 400, HEIGHT - 100, 100, 30);
 
         JButton createButton = new JButton("Create");
@@ -382,32 +384,31 @@ public class GameGui extends JFrame implements Gui {
     }
 
     @Override
-    public void pickGameMode() {
-        throw new RuntimeException();
-    }
-
-    @Override
-    public void pickHero() {
-        throw new RuntimeException();
-    }
-
-    @Override
     public void pickPrize(String prizeName) {
+        int reply = JOptionPane.showConfirmDialog(null,
+                "HAS DROPPED FROM KILLED ENEMY. WOULD YOU LIKE TO TAKE IT?",
+                        "Pick Prize",
+                JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+            MainController.guiActions.add("yes");
+        } else {
+            MainController.guiActions.add("no");
+        }
+    }
+
+    @Override
+    public void pickHero(List<Hero> heroes) {
         throw new RuntimeException();
     }
 
     @Override
     public void levelUpMessage() {
-        throw new RuntimeException();
+        JOptionPane.showMessageDialog(null,
+                "Level up! You're now level " + Hero.getHero().getLevel() + 1);
     }
 
     @Override
     public void gameFinishedMessage() {
-        throw new RuntimeException();
-    }
-
-    @Override
-    public void selectHeroError() {
         throw new RuntimeException();
     }
 
@@ -464,18 +465,16 @@ public class GameGui extends JFrame implements Gui {
         }
     }
 
-    private class SelectHeroButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MainController.guiActions.add("select");
-            setLoop(false);
-        }
-    }
-
     private class ContinueButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             setLoop(false);
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        this.dispose();
     }
 }

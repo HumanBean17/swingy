@@ -7,6 +7,8 @@ import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
 
+import java.util.List;
+
 public class TermGui implements Gui {
 
     public final boolean isGui = false;
@@ -56,11 +58,7 @@ public class TermGui implements Gui {
     }
 
     public void printErrorMessage(String message, boolean flush) {
-        this.printMessage("Error while saving hero to database. Game progress will not be saved after exit the game.", true);
-    }
-
-    public void selectHeroError() {
-        this.printMessage("Error while selecting a hero. Probably it wasn't created.", true);
+        this.printMessage(message, true);
     }
 
     public void levelUpMessage() {
@@ -83,12 +81,11 @@ public class TermGui implements Gui {
         this.printMessage("WHERE TO MOVE? : 'RIGHT/R', 'LEFT/L', 'UP/U', 'DOWN/D', 'INFO'\n> ", true);
     }
 
-    public void pickGameMode() {
-        this.printMessage("> CONSOLE\n> GUI\n> ", true);
-    }
-
-    public void pickHero() {
-        this.printMessage("> CREATE HERO\n> SELECT CREATED HERO\n> ", true);
+    public void pickHero(List<Hero> heroes) {
+        for (Hero hero : heroes) {
+            this.printMessage(hero.getName(), false);
+        }
+        this.printMessage("\n> WHAT HERO WOULD YOU LIKE TO CHOOSE?\n> ", false);
     }
 
     public void pickName() {
