@@ -20,7 +20,7 @@ public class MainController {
     public boolean battleHandler(Villain villain) {
         String userInput;
         boolean isHeroWon = true;
-        if (Main.gui.isGui()) {
+        if (!Main.gui.isGui()) {
             while (true) {
                 Main.gui.startBattle();
                 userInput = scanner.next().toLowerCase();
@@ -33,8 +33,12 @@ public class MainController {
                 Main.gui.playerDied();
         } else {
             Main.gui.startBattle();
+            System.out.println(guiActions);
+            System.out.println("exit from startbattle");
             String action = guiActions.remove();
-            if (action.equals("fight") || action.equals("run")) {
+            if (action.equals("fight") || action.equals("run") && !Battle.run()) {
+                System.out.println("here");
+                Main.gui.battleInfoFrame();
                 isHeroWon = Battle.startBattle(villain);
             }
             if (!isHeroWon)
@@ -45,11 +49,12 @@ public class MainController {
 
     public static MoveDirection pickMovement() {
         Hero hero = Hero.getHero();
-        Main.gui.pickMovement();
         String userInput;
         if (!Main.gui.isGui()) {
+            Main.gui.pickMovement();
             userInput = scanner.next().toLowerCase();
         } else {
+            System.out.println(guiActions);
             userInput = guiActions.remove();
         }
         MoveDirection direction = MoveDirection.NULL;

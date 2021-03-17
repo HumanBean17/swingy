@@ -77,7 +77,7 @@ public class Game {
                     continue;
                 }
                 if (!GameDb.insertHero(hero)) {
-                    Main.gui.saveHeroToDbError();
+                    Main.gui.printErrorMessage("ERROR WHILE SAVING HERO TO DATABASE. GAME PROGRESS WILL NOT BE SAVED AFTER EXIT THE GAME.", true);
                 }
                 Map.getMap().createMap(true);
             } else if (heroPick.equals(MainController.HeroPick.SELECT)) {

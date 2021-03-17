@@ -35,7 +35,7 @@ public class GameDb {
             connection = DriverManager.getConnection(url, properties);
             updateTables();
         } catch (SQLException ex) {
-            Main.gui.printMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
         }
         return connection;
     }
@@ -120,7 +120,7 @@ public class GameDb {
             hero.setHp(resultSet.getInt("hp"));
             hero.setMana(resultSet.getInt("mana"));
         } catch (SQLException | NullPointerException | ConnectionFailedException | PlayerNotFoundException ex) {
-            Main.gui.printMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
             hero = null;
         } finally {
             closeResultSet(resultSet);
@@ -158,7 +158,7 @@ public class GameDb {
             statement.setString(15, hero.getName());
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            Main.gui.printMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
             isSuccess = false;
         } finally {
             closeStatement(statement);
@@ -263,7 +263,7 @@ public class GameDb {
                 //heroes.add(hero);
             }
         } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
-            Main.gui.printMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
             hero = null;
         } finally {
             closeResultSet(resultSet);

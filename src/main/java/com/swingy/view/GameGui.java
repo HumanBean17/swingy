@@ -7,6 +7,7 @@ import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.characters.Character;
 import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
+import jdk.nashorn.internal.scripts.JO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,10 @@ public class GameGui extends JFrame implements Gui {
 
     private volatile JTextField textField;
     private volatile JLabel label;
+
+    private volatile JFrame battleInfoFrame;
+    private volatile JTextArea battleTextArea;
+
     private volatile String battleString;
 
     private final Font buttonFont = new Font("Courier", Font.PLAIN, 14);
@@ -38,6 +43,32 @@ public class GameGui extends JFrame implements Gui {
         this.setLayout(null);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    @Override
+    public void battleInfoFrame() {
+        battleInfoFrame = new JFrame();
+        battleInfoFrame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        battleInfoFrame.setResizable(false);
+        battleInfoFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        battleInfoFrame.setLocationRelativeTo(null);
+
+        battleTextArea = new JTextArea(20, 35);
+        battleTextArea.setEditable(false);
+        battleTextArea.setWrapStyleWord(true);
+        battleTextArea.setLineWrap(true);
+
+        JScrollPane scroll = new JScrollPane(battleTextArea,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        JPanel panel = new JPanel();
+        panel.add(scroll, BorderLayout.PAGE_START);
+
+        battleInfoFrame.getContentPane().add(panel);
+
+        battleInfoFrame.pack();
+        battleInfoFrame.setVisible(true);
     }
 
     private JLabel getMapArea() {
@@ -63,10 +94,12 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void startBattle() {
-        if (JOptionPane.showConfirmDialog(null,
-                "YOU'VE MET A VILLAIN. WHAT ARE YOU GOING TO DO?\n> FIGHT\n> RUN\n> ",
+        int reply = JOptionPane.showConfirmDialog(null,
+                "YOU'VE MET A VILLAIN. FIGHT?",
                 "Start Battle",
-                JOptionPane.YES_NO_OPTION) == 1) {
+                JOptionPane.YES_NO_OPTION);
+        System.out.println("here");
+        if (reply == JOptionPane.YES_OPTION) {
             MainController.guiActions.add("fight");
         } else {
             MainController.guiActions.add("run");
@@ -297,7 +330,7 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void validationError(String message) {
-
+        throw new RuntimeException();
     }
 
     @Override
@@ -308,86 +341,86 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void attack(CharacterClass characterClass, String name, Character enemy, int damage) {
-        battleString += characterClass.getGameClass() + " '" + name + "' attacks " +
-                enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage;
+        battleTextArea.append(characterClass.getGameClass() + " '" + name + "' attacks " +
+                enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage + "\n\n");
     }
 
     @Override
     public void criticalDamage() {
-        battleString += "CRITICAL DAMAGE";
+        battleTextArea.append("CRITICAL DAMAGE\n\n");
     }
 
     @Override
     public void miss(CharacterClass characterClass, String name) {
-        battleString += characterClass.getGameClass() + " '" + name + "' misses";
+        battleTextArea.append(characterClass.getGameClass() + " '" + name + "' misses\n\n");
     }
 
     @Override
     public void enemyFreeze(CharacterClass characterClass, String name) {
-        battleString += "ENEMY WAS FROZEN BY " + characterClass.getGameClass() + " '" + name + "'";
+        battleTextArea.append("ENEMY WAS FROZEN BY " + characterClass.getGameClass() + " '" + name + "'\n\n");
     }
 
     @Override
     public void battleWin() {
-        battleString += "You've won the battle!";
+        battleTextArea.append("You've won the battle!\n\n");
     }
 
     @Override
     public void battleLost(Villain villain) {
-        battleString += "Villain has " + villain.getHp() + " health points";
+        battleTextArea.append("Villain has " + villain.getHp() + " health points\n\n");
     }
 
     @Override
     public void playerDied() {
-
+        throw new RuntimeException();
     }
 
     @Override
     public void pickMovement() {
-
+        throw new RuntimeException();
     }
 
     @Override
     public void pickGameMode() {
-
+        throw new RuntimeException();
     }
 
     @Override
     public void pickHero() {
-
+        throw new RuntimeException();
     }
 
     @Override
     public void pickPrize(String prizeName) {
-
+        throw new RuntimeException();
     }
 
     @Override
     public void levelUpMessage() {
-
+        throw new RuntimeException();
     }
 
     @Override
     public void gameFinishedMessage() {
-
+        throw new RuntimeException();
     }
 
     @Override
     public void selectHeroError() {
-
+        throw new RuntimeException();
     }
 
     @Override
-    public void saveHeroToDbError() {
+    public void printErrorMessage(String message, boolean flush) {
         JOptionPane.showMessageDialog(null,
-                "ERROR WHILE SAVING HERO TO DATABASE. GAME PROGRESS WILL NOT BE SAVED AFTER EXIT THE GAME.",
+                message,
                 "Error info",
                 JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
     public void info(Hero hero) {
-
+        throw new RuntimeException();
     }
 
     @Override
@@ -398,7 +431,7 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void printMessage(String message, boolean flush) {
-
+        throw new RuntimeException();
     }
 
     public void setLoop(boolean loop) {

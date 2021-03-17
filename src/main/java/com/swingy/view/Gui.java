@@ -9,6 +9,8 @@ public interface Gui {
 
     boolean isGui();
 
+    void battleInfoFrame();
+
     void validationError(String message);
 
     void takeDamage(CharacterClass characterClass, String name, int takenDamage, int hp);
@@ -45,7 +47,7 @@ public interface Gui {
 
      void selectHeroError();
 
-     void saveHeroToDbError();
+     void printErrorMessage(String message, boolean flush);
 
      void info(Hero hero);
 

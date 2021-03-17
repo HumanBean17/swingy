@@ -16,6 +16,11 @@ public class TermGui implements Gui {
         return isGui;
     }
 
+    @Override
+    public void battleInfoFrame() {
+
+    }
+
     public void validationError(String message) {
         this.printMessage(message, true);
     }
@@ -50,7 +55,7 @@ public class TermGui implements Gui {
         this.printMessage("You've won the battle!", true);
     }
 
-    public void saveHeroToDbError() {
+    public void printErrorMessage(String message, boolean flush) {
         this.printMessage("Error while saving hero to database. Game progress will not be saved after exit the game.", true);
     }
 
