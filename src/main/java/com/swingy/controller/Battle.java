@@ -24,18 +24,19 @@ public class Battle {
         boolean isHeroWon = true;
         while (true) {
             Hero.getHero().attack(villain);
-            villain.attack(Hero.getHero());
-            if (Hero.getHero().getHp() <= 0) {
-                Main.gui.battleLost(villain);
-                isHeroWon = false;
-                break;
-            } else if (villain.getHp() <= 0) {
+            if (villain.getHp() <= 0) {
                 Main.gui.battleWin();
                 Hero.getHero().addExperience(villain.getLevel() * 300 + 200);
                 Hero.getHero().setHp(Hero.getHero().getMaxHp());
                 getPrize(villain, Hero.getHero());
                 Game.deleteVillain(villain);
                 Game.checkNextLevel();
+                break;
+            }
+            villain.attack(Hero.getHero());
+            if (Hero.getHero().getHp() <= 0) {
+                Main.gui.battleLost(villain);
+                isHeroWon = false;
                 break;
             }
             try {

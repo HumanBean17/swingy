@@ -24,8 +24,6 @@ public class GameGui extends JFrame implements Gui {
     private volatile JFrame battleInfoFrame;
     private volatile JTextArea battleTextArea;
 
-    private volatile String battleString;
-
     private final Font buttonFont = new Font("Courier", Font.PLAIN, 14);
 
     private volatile boolean loop = false;
@@ -335,8 +333,8 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void takeDamage(CharacterClass characterClass, String name, int takenDamage, int hp) {
-        battleString += characterClass.getGameClass() + " " + name + " takes damage " +
-                takenDamage + " and has " + hp + " health points";
+        battleTextArea.append(characterClass.getGameClass() + " " + name + " takes damage " +
+                takenDamage + " and has " + hp + " health points\n\n");
     }
 
     @Override
@@ -362,17 +360,20 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void battleWin() {
-        battleTextArea.append("You've won the battle!\n\n");
+        JOptionPane.showMessageDialog(null,
+                "YOU'VE WON THE BATTLE!\n\n");
     }
 
     @Override
     public void battleLost(Villain villain) {
-        battleTextArea.append("Villain has " + villain.getHp() + " health points\n\n");
+        JOptionPane.showMessageDialog(null,
+                "VILLAIN HAS " + villain.getHp() + " HEALTH POINTS\n\n");
     }
 
     @Override
     public void playerDied() {
-        throw new RuntimeException();
+        JOptionPane.showMessageDialog(null,
+                "YOU DIED. GAME OVER ON LEVEL " + Hero.getHero().getLevel());
     }
 
     @Override
