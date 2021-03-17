@@ -122,7 +122,8 @@ public class MainController {
                 }
             }
         } else {
-            //String
+            Hero hero = GameDb.selectHero(guiActions.remove());
+            return hero;
         }
     }
 

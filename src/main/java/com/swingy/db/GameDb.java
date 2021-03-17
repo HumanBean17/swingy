@@ -216,10 +216,7 @@ public class GameDb {
     }
 
     public static List<Hero> getHeroes() throws SQLException {
-        List<Hero> heroes = new LinkedList<>(); //TODO removed stub
-//        heroes.add("Dima");
-//        heroes.add("Oleg");
-//        heroes.add("Artem");
+        List<Hero> heroes = new LinkedList<>();
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         Hero hero;
@@ -243,6 +240,7 @@ public class GameDb {
                             "JOIN armor a on h.armor = a.id " +
                             "JOIN helm h2 on h.helm = h2.id");
             resultSet = statement.executeQuery();
+            System.out.println(resultSet);
             while (!resultSet.next()) {
                 hero = Hero.createHero();
                 hero.setCoordinates(new Coordinates(resultSet.getInt("x"), resultSet.getInt("y")));

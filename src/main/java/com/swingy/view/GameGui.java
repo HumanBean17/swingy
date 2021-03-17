@@ -277,7 +277,7 @@ public class GameGui extends JFrame implements Gui {
         JButton selectButton = new JButton("Select");
         selectButton.setFont(buttonFont);
         selectButton.addActionListener(e -> {
-            MainController.guiActions.add(String.valueOf(comboBox.getSelectedItem()));
+            MainController.guiActions.add(((Hero) comboBox.getSelectedItem()).getName());
             MainController.guiActions.add("select");
             setLoop(false);
         });
