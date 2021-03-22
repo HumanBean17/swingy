@@ -25,7 +25,7 @@ public class Battle {
         while (true) {
             Hero.getHero().attack(villain);
             if (villain.getHp() <= 0) {
-                //Main.gui.battleWin();
+                Main.gui.battleWin();
                 Hero.getHero().addExperience(villain.getLevel() * 300 + 200);
                 Hero.getHero().setHp(Hero.getHero().getMaxHp());
                 getPrize(villain, Hero.getHero());
@@ -35,7 +35,7 @@ public class Battle {
             }
             villain.attack(Hero.getHero());
             if (Hero.getHero().getHp() <= 0) {
-                //Main.gui.battleLost(villain);
+                Main.gui.battleLost(villain);
                 isHeroWon = false;
                 break;
             }
@@ -61,7 +61,7 @@ public class Battle {
     public static void getPrize(Character enemy, Character hero) {
         int rand = new Random().nextInt(100);
         System.out.println(rand);
-        if (rand % 5 == 0) {
+        if (rand % 2 == 0) {
             rand = new Random().nextInt(6);
             Weapon weapon = null;
             Armor armor = null;

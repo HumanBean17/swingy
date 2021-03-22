@@ -11,6 +11,10 @@ public interface Gui {
 
     boolean isGui();
 
+    void finalize() throws Throwable;
+
+    Hero getSelectedHero();
+
     void battleInfoFrame();
 
     void validationError(String message);

@@ -37,7 +37,7 @@ public class MainController {
         } else {
             Main.gui.startBattle();
             System.out.println(guiActions);
-            System.out.println("exit from startbattle");
+            while (guiActions.isEmpty());
             String action = guiActions.remove();
             if (action.equals("fight") || action.equals("run") && !Battle.run()) {
                 System.out.println("here");
@@ -58,6 +58,7 @@ public class MainController {
             userInput = scanner.next().toLowerCase();
         } else {
             System.out.println(guiActions);
+            while (guiActions.isEmpty());
             userInput = guiActions.remove();
         }
         MoveDirection direction = MoveDirection.NULL;
@@ -98,6 +99,7 @@ public class MainController {
             }
         } else {
             Main.gui.drawMenu();
+            while (guiActions.isEmpty());
             return heroPickCondition(guiActions.remove());
         }
     }
@@ -122,15 +124,17 @@ public class MainController {
                 }
             }
         } else {
-            Hero hero = GameDb.selectHero(guiActions.remove());
-            return hero;
+            while (guiActions.isEmpty());
+            return Main.gui.getSelectedHero();
         }
     }
 
     public String pickName() {
-        Main.gui.pickName();
         if (!Main.gui.isGui())
             return scanner.next();
+        else
+            Main.gui.pickName();
+        while (guiActions.isEmpty());
         return guiActions.remove();
     }
 
@@ -144,6 +148,7 @@ public class MainController {
             }
         } else {
             Main.gui.pickClass();
+            while (guiActions.isEmpty());
             return pickClassCondition(guiActions.remove());
         }
     }
@@ -172,6 +177,7 @@ public class MainController {
             }
         } else {
             Main.gui.pickPrize(prizeName);
+            while (guiActions.isEmpty());
             String userInput = MainController.guiActions.remove();
             return userInput.equals("yes");
         }

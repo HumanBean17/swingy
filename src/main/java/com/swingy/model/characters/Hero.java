@@ -42,6 +42,10 @@ public class Hero extends Character {
         hero.getCoordinates().setY(Map.getMap().getSize() / 2);
     }
 
+    public static void setHero(Hero hero1) {
+        hero = hero1;
+    }
+
     public static Hero getHero() {
         if (hero == null)
             createHero();

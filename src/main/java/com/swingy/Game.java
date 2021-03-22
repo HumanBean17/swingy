@@ -39,14 +39,17 @@ public class Game {
             direction = Main.controller.pickMovement();
             villain = checkBattle();
             if (villain != null) {
-                if (Main.controller.battleHandler(villain))
+                if (Main.controller.battleHandler(villain)) {
                     enemies.remove(villain);
-                else
+                }
+                else {
+                    GameDb.deleteHero();
                     Main.restartTheGame();
+                }
             }
             if (direction == MoveDirection.BORDER && checkNextLevel()) {
                 Main.gui.levelUpMessage();
-                if (Hero.getHero().getLevel() >= 7) {
+                if (Hero.getHero().getLevel() >= 1) {
                     Main.gui.gameFinishedMessage();
                     Main.restartTheGame();
                 } else {

@@ -19,6 +19,16 @@ public class TermGui implements Gui {
     }
 
     @Override
+    public void finalize() throws Throwable {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public Hero getSelectedHero() {
+        throw new RuntimeException();
+    }
+
+    @Override
     public void battleInfoFrame() {
 
     }

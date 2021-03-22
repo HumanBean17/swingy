@@ -240,9 +240,8 @@ public class GameDb {
                             "JOIN armor a on h.armor = a.id " +
                             "JOIN helm h2 on h.helm = h2.id");
             resultSet = statement.executeQuery();
-            System.out.println(resultSet);
-            while (!resultSet.next()) {
-                hero = Hero.createHero();
+            while (resultSet.next()) {
+                hero = new Hero();
                 hero.setCoordinates(new Coordinates(resultSet.getInt("x"), resultSet.getInt("y")));
                 hero.setWeapon(retrieveWeapon(resultSet));
                 hero.setArmor(retrieveArmor(resultSet));
@@ -266,6 +265,30 @@ public class GameDb {
             closeStatement(statement);
         }
         return heroes;
+    }
+
+    public static void deleteHero() {
+        PreparedStatement statement = null;
+        try {
+            if (connection == null)
+                throw new ConnectionFailedException();
+            updateTables();
+
+            statement = connection.prepareStatement(
+                    "DELETE FROM hero " +
+                            "WHERE name = ?");
+            statement.setString(1, Hero.getHero().getName());
+            statement.executeUpdate();
+
+//            statement = connection.prepareStatement(
+//                    "DELETE FROM
+//            )
+
+        } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
+            Main.gui.printErrorMessage(ex.getMessage(), true);
+        } finally {
+            closeStatement(statement);
+        }
     }
 
     private static UUID updateHelm(Helm helm) throws SQLException {
@@ -405,6 +428,22 @@ public class GameDb {
                 return new Knife();
             case "fists":
                 return new Fists();
+            case "diamond staff":
+                return new DiamondStaff();
+            case "staff":
+                return new Staff();
+            case "staff with enchanted glass":
+                return new StaffWithEnchantedGlass();
+            case "staff with enchanted stone":
+                return new StaffWithEnchantedStone();
+            case "small bow":
+                return new SmallBow();
+            case "medium bow":
+                return new MediumBow();
+            case "large bow":
+                return new LargeBow();
+            case "slingshot":
+                return new Slingshot();
             default:
                 throw new SQLException("Unknown weapon provided " + result);
         }

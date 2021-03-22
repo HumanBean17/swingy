@@ -9,11 +9,16 @@ import com.swingy.view.TermGui;
 public class Main {
 
     public static Gui gui;
-    public static final MainController controller = new MainController();
+    public static MainController controller = new MainController();
     private static String[] args;
 
     public static void restartTheGame() {
         Hero.deleteHero();
+        try {
+            gui.finalize();
+        } catch (Throwable ignored) {}
+        gui = null;
+        controller = new MainController();
         main(args);
     }
 

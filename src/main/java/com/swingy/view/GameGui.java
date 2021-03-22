@@ -13,9 +13,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GameGui extends JFrame implements Gui {
+
+    private static Hero selectedHero = null;
 
     private volatile JTextField textField;
     private volatile JLabel label;
@@ -26,6 +29,7 @@ public class GameGui extends JFrame implements Gui {
     private final Font buttonFont = new Font("Courier", Font.PLAIN, 14);
 
     private volatile boolean loop = false;
+
     public final boolean isGui = true;
 
     private static final int WIDTH = 500;
@@ -42,8 +46,13 @@ public class GameGui extends JFrame implements Gui {
         this.setVisible(true);
     }
 
+
+
     @Override
     public void battleInfoFrame() {
+        if (battleInfoFrame != null)
+            battleInfoFrame.dispose();
+
         battleInfoFrame = new JFrame();
         battleInfoFrame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         battleInfoFrame.setResizable(false);
@@ -56,7 +65,7 @@ public class GameGui extends JFrame implements Gui {
         battleTextArea.setLineWrap(true);
 
         JScrollPane scroll = new JScrollPane(battleTextArea,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         JPanel panel = new JPanel();
@@ -66,6 +75,8 @@ public class GameGui extends JFrame implements Gui {
 
         battleInfoFrame.pack();
         battleInfoFrame.setVisible(true);
+
+        this.setVisible(false);
     }
 
     private JLabel getMapArea() {
@@ -264,20 +275,30 @@ public class GameGui extends JFrame implements Gui {
         flush();
         loop = true;
 
-        JComboBox<Hero> comboBox = new JComboBox<>();
+        JComboBox<String> comboBox = new JComboBox<>();
         comboBox.setFont(buttonFont);
         comboBox.setBounds(WIDTH / 2 - 65, HEIGHT - 300, 130, 150);
+
+        List<Hero> heroes = new LinkedList<>();
         try {
-            List<Hero> heroes = GameDb.getHeroes();
+            heroes = GameDb.getHeroes();
             for (Hero hero : heroes) {
-                comboBox.addItem(hero);
+                comboBox.addItem(hero.getName());
             }
         } catch (SQLException ignored) { }
 
         JButton selectButton = new JButton("Select");
         selectButton.setFont(buttonFont);
+        List<Hero> finalHeroes = heroes;
         selectButton.addActionListener(e -> {
-            MainController.guiActions.add(((Hero) comboBox.getSelectedItem()).getName());
+            if (comboBox.getSelectedItem() != null) {
+                for (Hero hero : finalHeroes) {
+                    if (hero.getName().equals(comboBox.getSelectedItem())) {
+                        setSelectedHero(hero);
+                        break;
+                    }
+                }
+            }
             MainController.guiActions.add("select");
             setLoop(false);
         });
@@ -328,6 +349,16 @@ public class GameGui extends JFrame implements Gui {
         return isGui;
     }
 
+    private void setSelectedHero(Hero hero) {
+        Hero.setHero(hero);
+        selectedHero = hero;
+    }
+
+    @Override
+    public Hero getSelectedHero() {
+        return selectedHero;
+    }
+
     @Override
     public void validationError(String message) {
         throw new RuntimeException();
@@ -362,14 +393,14 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void battleWin() {
-        JOptionPane.showMessageDialog(null,
-                "YOU'VE WON THE BATTLE!\n\n");
+        this.setVisible(true);
+        battleTextArea.append("YOU'VE WON THE BATTLE!\n\n");
     }
 
     @Override
     public void battleLost(Villain villain) {
-        JOptionPane.showMessageDialog(null,
-                "VILLAIN HAS " + villain.getHp() + " HEALTH POINTS\n\n");
+        this.setVisible(true);
+        battleTextArea.append("VILLAIN HAS " + villain.getHp() + " HEALTH POINTS\n\n");
     }
 
     @Override
@@ -386,7 +417,7 @@ public class GameGui extends JFrame implements Gui {
     @Override
     public void pickPrize(String prizeName) {
         int reply = JOptionPane.showConfirmDialog(null,
-                "HAS DROPPED FROM KILLED ENEMY. WOULD YOU LIKE TO TAKE IT?",
+                prizeName + " HAS DROPPED FROM KILLED ENEMY. WOULD YOU LIKE TO TAKE IT?",
                         "Pick Prize",
                 JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
@@ -409,7 +440,7 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void gameFinishedMessage() {
-        throw new RuntimeException();
+        JOptionPane.showMessageDialog(null, "Congratulations! You've reached game level 7 and completed the game.");
     }
 
     @Override
@@ -433,7 +464,7 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void printMessage(String message, boolean flush) {
-        throw new RuntimeException();
+        JOptionPane.showMessageDialog(null, message);
     }
 
     public void setLoop(boolean loop) {
@@ -451,6 +482,7 @@ public class GameGui extends JFrame implements Gui {
             if (Hero.validate(false)) {
                 loop = false;
                 MainController.guiActions.add(textField.getText());
+                System.out.println(MainController.guiActions);
             } else {
                 label.setText("Name must be 3-16 characters A-z;0-9 symbols!");
             }
@@ -472,9 +504,11 @@ public class GameGui extends JFrame implements Gui {
         }
     }
 
+
     @Override
-    protected void finalize() throws Throwable {
+    public void finalize() throws Throwable {
         super.finalize();
+        battleInfoFrame.dispose();
         this.dispose();
     }
 }
