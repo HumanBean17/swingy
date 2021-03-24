@@ -86,6 +86,7 @@ public class MainController {
         } else if (userInput.startsWith("i")) {
             Main.gui.info(hero);
         }
+        System.out.println(direction);
         return direction;
     }
 

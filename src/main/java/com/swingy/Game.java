@@ -49,7 +49,9 @@ public class Game {
             }
             if (direction == MoveDirection.BORDER && checkNextLevel()) {
                 Main.gui.levelUpMessage();
-                if (Hero.getHero().getLevel() >= 1) {
+                System.out.println(Hero.getHero().getLevel());
+                if (Hero.getHero().getLevel() >= 7) {
+                    System.out.println("finish");
                     Main.gui.gameFinishedMessage();
                     Main.restartTheGame();
                 } else {
