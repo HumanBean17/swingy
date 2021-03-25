@@ -151,6 +151,7 @@ public class TermGui implements Gui {
 
     @Override
     public void drawHello() {
+        printMessage("\n\n\n", true);
         printMessage(
                    "           _______.____    __    ____  __  .__   __.   ___________    ____          \n"
                           + "          /       |\\   \\  /  \\  /   / |  | |  \\ |  |  /  _____\\   \\  /   /    \n"
@@ -158,7 +159,7 @@ public class TermGui implements Gui {
                           + "          \\   \\      \\            /   |  | |  . `  | |  | |_ |  \\_    _/        \n"
                           + "      .----)   |      \\    /\\    /    |  | |  |\\   | |  |__| |    |  |           \n"
                           + "      |_______/        \\__/  \\__/     |__| |__| \\__|  \\______|    |__|          \n",
-                true);
+                false);
         MainController.enterForContinue();
     }
 

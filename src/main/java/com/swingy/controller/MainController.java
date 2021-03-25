@@ -185,6 +185,7 @@ public class MainController {
     }
 
     public static void enterForContinue() {
+        Main.gui.printMessage("\n\nPRESS [ENTER] TO CONTINUE..", false);
         try { System.in.read(); } catch(Exception e) {}
     }
 
