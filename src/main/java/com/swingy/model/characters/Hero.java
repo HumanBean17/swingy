@@ -56,7 +56,7 @@ public class Hero extends Character {
         hero = new Hero();
         hero.maxHp = 100;
         hero.hp = 100;
-        hero.pickName();
+        hero.name = Main.controller.pickName();
         if (!validate(true)) {
             hero = null;
             return null;
@@ -88,10 +88,6 @@ public class Hero extends Character {
         setWeapon(new Slingshot());
         setArmor(new ClothArmor());
         setHelm(new ClothHelm());
-    }
-
-    public void pickName() {
-        this.name = Main.controller.pickName();
     }
 
     public void pickClass() {

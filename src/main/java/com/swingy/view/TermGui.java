@@ -1,6 +1,7 @@
 package com.swingy.view;
 
 import com.swingy.Game;
+import com.swingy.controller.MainController;
 import com.swingy.map.Map;
 import com.swingy.model.cclasses.CharacterClass;
 import com.swingy.model.characters.Character;
@@ -39,20 +40,20 @@ public class TermGui implements Gui {
 
     public void takeDamage(CharacterClass characterClass, String name, int takenDamage, int hp) {
         this.printMessage(characterClass.getGameClass() + " " + name + " takes damage " +
-                takenDamage + " and has " + hp + " health points", true);
+                takenDamage + " and has " + hp + " health points\n\n", false);
     }
 
     public void attack(CharacterClass characterClass, String name, Character enemy, int damage) {
         this.printMessage(characterClass.getGameClass() + " '" + name + "' attacks " +
-                enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage, false);
+                enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage + "\n\n", true);
     }
 
     public void criticalDamage() {
-        this.printMessage("CRITICAL DAMAGE", true);
+        this.printMessage("CRITICAL DAMAGE", false);
     }
 
     public void miss(CharacterClass characterClass, String name) {
-        this.printMessage(characterClass.getGameClass() + " '" + name + "' misses", true);
+        this.printMessage(characterClass.getGameClass() + " '" + name + "' misses", false);
     }
 
     public void enemyFreeze(CharacterClass characterClass, String name) {
@@ -61,10 +62,12 @@ public class TermGui implements Gui {
 
     public void battleLost(Villain villain) {
         this.printMessage("Villain has " + villain.getHp() + " health points", true);
+         MainController.enterForContinue();
     }
 
     public void battleWin() {
         this.printMessage("You've won the battle!", true);
+         MainController.enterForContinue();
     }
 
     public void printErrorMessage(String message, boolean flush) {
@@ -72,79 +75,91 @@ public class TermGui implements Gui {
     }
 
     public void levelUpMessage() {
-        this.printMessage("Level up! You're now level " + Hero.getHero().getLevel() + 1, true);
+        this.printMessage("Level up! You're now level " + ((Hero.getHero().getLevel()) + 1), true);
+         MainController.enterForContinue();
     }
 
     public void gameFinishedMessage() {
         this.printMessage("Congratulations! You've reached game level 7 and completed the game.", true);
+        MainController.enterForContinue();
     }
 
     public void startBattle() {
-        this.printMessage("YOU'VE MET A VILLAIN. WHAT ARE YOU GOING TO DO?\n> FIGHT\n> RUN\n> ", true);
+        this.printMessage("YOU'VE MET A VILLAIN. WHAT ARE YOU GOING TO DO?\n* FIGHT\n* RUN\n\n> ", true);
     }
 
     public void playerDied() {
-        this.printMessage("YOU DIED. GAME OVER ON LEVEL " + Hero.getHero().getLevel(), true);
+        this.printMessage("YOU DIED. GAME OVER ON LEVEL " + (Hero.getHero().getLevel() + 1), true);
+        MainController.enterForContinue();
     }
 
     public void pickMovement() {
-        this.printMessage("WHERE TO MOVE? : 'RIGHT/R', 'LEFT/L', 'UP/U', 'DOWN/D', 'INFO'\n> ", true);
+        this.printMessage("* WHERE TO MOVE? : 'RIGHT/R', 'LEFT/L', 'UP/U', 'DOWN/D', 'INFO'\n\n> ", false);
     }
 
     public void pickHero(List<Hero> heroes) {
+        this.printMessage("{ ", true);
         for (Hero hero : heroes) {
-            this.printMessage(hero.getName(), false);
+            this.printMessage(hero.getName() + ", ", false);
         }
-        this.printMessage("\n> WHAT HERO WOULD YOU LIKE TO CHOOSE?\n> ", false);
+        this.printMessage("}\n* WHAT HERO WOULD YOU LIKE TO CHOOSE?\n\n> ", false);
     }
 
     public void pickName() {
-        this.printMessage("WHAT'S YOUR NAME, STRANGER?\n> ", true);
+        this.printMessage("* WHAT'S YOUR NAME, STRANGER?\n\n> ", true);
     }
 
     public void pickPrize(String prizeName) {
-        this.printMessage(prizeName + " HAS DROPPED FROM KILLED ENEMY. WOULD YOU LIKE TO TAKE IT? (YES/NO) > ", true);
+        this.printMessage(prizeName + " HAS DROPPED FROM KILLED ENEMY. WOULD YOU LIKE TO TAKE IT? (YES/NO)\n\n> ", true);
     }
 
     public void info(Hero hero) {
-        this.printMessage("NAME:                " + hero.getName().toUpperCase(), true);
-        this.printMessage("CLASS:               " + hero.getCharacterClass().getGameClass(), false);
-        this.printMessage("HEALTH POINTS:       " + hero.getHp() + "/" + Hero.getHero().getMaxHp(), false);
-        this.printMessage("level:               " + hero.getLevel(), false);
-        this.printMessage("experience:          " + hero.getExperience() + "/" + Game.getNextLevelExperience(), false);
-        this.printMessage("attack:              " + hero.getAttack(), false);
-        this.printMessage("defence:             " + hero.getDefense(), false);
-        this.printMessage("hit points:          " + hero.getHitPoints(), false);
+        this.printMessage("NAME:                " + hero.getName().toUpperCase() + "\n", true);
+        this.printMessage("CLASS:               " + hero.getCharacterClass().getGameClass() + "\n", false);
+        this.printMessage("HEALTH POINTS:       " + hero.getHp() + "/" + Hero.getHero().getMaxHp() + "\n", false);
+        this.printMessage("LEVEL:               " + hero.getLevel() + "\n", false);
+        this.printMessage("EXPERIENCE:          " + hero.getExperience() + "/" + Game.getNextLevelExperience() + "\n", false);
+        this.printMessage("ATTACK:              " + hero.getAttack() + "\n", false);
+        this.printMessage("DEFENCE:             " + hero.getDefense() + "\n", false);
+        this.printMessage("HIT POINTS:          " + hero.getHitPoints() + "\n", false);
         if (hero.getWeapon() != null)
-            this.printMessage("weapon:          " + hero.getWeapon().getName(), false);
+            this.printMessage("WEAPON:          " + hero.getWeapon().getName() + "\n", false);
         if (hero.getArmor() != null)
-            this.printMessage("armor:           " + hero.getArmor().getName(), false);
+            this.printMessage("ARMOR:           " + hero.getArmor().getName() + "\n", false);
         if (hero.getHelm() != null)
-            this.printMessage("helmet:          " + hero.getHelm().getName(), false);
+            this.printMessage("HELMET:          " + hero.getHelm().getName() + "\n", false);
+        MainController.enterForContinue();
     }
 
     public void pickClass() {
-        this.printMessage("> WARRIOR (chance of critical damage)\n" +
-                "> WIZARD (chance to freeze enemy)\n" +
-                " ARCHER (chance of miss, but more damage)\n> ", true);
+        this.printMessage("* WARRIOR (chance of critical damage)\n" +
+                "* WIZARD (chance to freeze enemy)\n" +
+                "* ARCHER (chance of miss, but more damage)\n\n> ", true);
     }
 
     @Override
     public void printMessage(String message, boolean flush) {
         if (flush)
             flush();
-        System.out.println(message);
+        System.out.print(message);
     }
 
     @Override
     public void drawMenu() {
-        flush();
-        System.out.print("> CREATE HERO\n> SELECT CREATED HERO\n> ");
+        printMessage("* CREATE HERO\n* SELECT CREATED HERO\n\n> ", true);
     }
 
     @Override
     public void drawHello() {
-
+        printMessage(
+                   "           _______.____    __    ____  __  .__   __.   ___________    ____          \n"
+                          + "          /       |\\   \\  /  \\  /   / |  | |  \\ |  |  /  _____\\   \\  /   /    \n"
+                          + "         |   (----` \\   \\/    \\/   /  |  | |   \\|  | |  |  __  \\   \\/   /     \n"
+                          + "          \\   \\      \\            /   |  | |  . `  | |  | |_ |  \\_    _/        \n"
+                          + "      .----)   |      \\    /\\    /    |  | |  |\\   | |  |__| |    |  |           \n"
+                          + "      |_______/        \\__/  \\__/     |__| |__| \\__|  \\______|    |__|          \n",
+                true);
+        MainController.enterForContinue();
     }
 
     public void writeMap() {

@@ -1,5 +1,6 @@
 package com.swingy.view;
 
+import com.swingy.Game;
 import com.swingy.controller.MainController;
 import com.swingy.db.GameDb;
 import com.swingy.map.Map;
@@ -9,10 +10,10 @@ import com.swingy.model.characters.Hero;
 import com.swingy.model.characters.Villain;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,10 +24,12 @@ public class GameGui extends JFrame implements Gui {
     private volatile JTextField textField;
     private volatile JLabel label;
 
+    private volatile JFrame heroInfoFrame;
     private volatile JFrame battleInfoFrame;
+
     private volatile JTextArea battleTextArea;
 
-    private final Font buttonFont = new Font("Courier", Font.PLAIN, 14);
+    private final Font textFont = new Font("Courier", Font.PLAIN, 14);
 
     private volatile boolean loop = false;
 
@@ -46,23 +49,65 @@ public class GameGui extends JFrame implements Gui {
         this.setVisible(true);
     }
 
+    public void heroInfoFrame(Hero hero) {
+        if (heroInfoFrame != null) {
+            heroInfoFrame.dispose();
+            heroInfoFrame = null;
+        }
 
+        heroInfoFrame = new JFrame();
+        heroInfoFrame.setFont(textFont);
+        heroInfoFrame.setPreferredSize(new Dimension(WIDTH - 50, HEIGHT - 150));
+        heroInfoFrame.setResizable(false);
+        heroInfoFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        heroInfoFrame.setLocationRelativeTo(this);
+
+        String infoString = "<html><body><pre>";
+        infoString += ("NAME:                " + hero.getName().toUpperCase() + "<br>");
+        infoString += ("CLASS:               " + hero.getCharacterClass().getGameClass() + "<br>");
+        infoString += ("HEALTH POINTS:       " + hero.getHp() + "/" + Hero.getHero().getMaxHp() + "<br>");
+        infoString += ("LEVEL:               " + hero.getLevel() + "<br>");
+        infoString += ("EXPERIENCE:          " + hero.getExperience() + "/" + Game.getNextLevelExperience() + "<br>");
+        infoString += ("ATTACK:              " + hero.getAttack() + "<br>");
+        infoString += ("DEFENCE:             " + hero.getDefense() + "<br>");
+        infoString += ("HIT POINTS:          " + hero.getHitPoints() + "<br>");
+        if (hero.getWeapon() != null)
+            infoString += ("WEAPON:          " + hero.getWeapon().getName() + "<br>");
+        if (hero.getArmor() != null)
+            infoString += ("ARMOR:           " + hero.getArmor().getName() + "<br>");
+        if (hero.getHelm() != null)
+            infoString += ("HELMET:          " + hero.getHelm().getName() + "<br>");
+        infoString += "</pre></body></html>";
+        JLabel heroInfoLabel = new JLabel(infoString);
+        
+        JPanel panel = new JPanel();
+        panel.add(heroInfoLabel);
+
+        heroInfoFrame.getContentPane().add(panel);
+
+        heroInfoFrame.pack();
+        heroInfoFrame.setVisible(true);
+    }
 
     @Override
     public void battleInfoFrame() {
-        if (battleInfoFrame != null)
+        if (battleInfoFrame != null) {
             battleInfoFrame.dispose();
+            battleInfoFrame = null;
+        }
 
         battleInfoFrame = new JFrame();
-        battleInfoFrame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        battleInfoFrame.setPreferredSize(new Dimension(WIDTH, HEIGHT - 200));
         battleInfoFrame.setResizable(false);
         battleInfoFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        battleInfoFrame.setLocationRelativeTo(null);
+        battleInfoFrame.setLocationRelativeTo(this);
 
-        battleTextArea = new JTextArea(20, 35);
+        battleTextArea = new JTextArea(9, 35);
         battleTextArea.setEditable(false);
         battleTextArea.setWrapStyleWord(true);
         battleTextArea.setLineWrap(true);
+        DefaultCaret caret = (DefaultCaret)battleTextArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         JScrollPane scroll = new JScrollPane(battleTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -96,6 +141,7 @@ public class GameGui extends JFrame implements Gui {
         }
         mapString += ("<br></pre></body></html>");
         JLabel mapLabel = new JLabel(mapString);
+        mapLabel.setFont(textFont);
         mapLabel.setFocusable(false);
         return mapLabel;
     }
@@ -118,16 +164,13 @@ public class GameGui extends JFrame implements Gui {
         loop = true;
         flush();
 
-        this.setLayout(new GridBagLayout());
+        //this.setLayout(new GridBagLayout());
 
         JButton upButton = new JButton("up");
-        upButton.setFont(buttonFont);
         JButton downButton = new JButton("down");
-        downButton.setFont(buttonFont);
         JButton leftButton = new JButton("left");
-        leftButton.setFont(buttonFont);
         JButton rightButton = new JButton("right");
-        rightButton.setFont(buttonFont);
+        JButton infoButton = new JButton("info");
 
         JLabel mapArea = getMapArea();
 
@@ -147,6 +190,10 @@ public class GameGui extends JFrame implements Gui {
             loop = false;
             MainController.guiActions.add("right");
         });
+        infoButton.addActionListener(e -> {
+            heroInfoFrame(Hero.getHero());
+            loop = false;
+        });
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -161,6 +208,9 @@ public class GameGui extends JFrame implements Gui {
         this.add(downButton, c);
         c.gridx = 2;
         this.add(rightButton, c);
+        c.gridy = 3;
+        c.gridx = 1;
+        this.add(infoButton, c);
 
         this.setVisible(true);
         this.repaint();
@@ -172,7 +222,7 @@ public class GameGui extends JFrame implements Gui {
         loop = true;
         flush();
 
-        this.setLayout(new GridBagLayout());
+        //this.setLayout(new GridBagLayout());
 
         JButton warriorButton = new JButton("WARRIOR");
         JButton wizardButton = new JButton("WIZARD");
@@ -197,10 +247,13 @@ public class GameGui extends JFrame implements Gui {
         GridBagConstraints c = new GridBagConstraints();
 
         JLabel warriorLabel = new JLabel("critical damage");
+        warriorLabel.setFont(textFont);
         warriorLabel.setForeground(Color.BLUE);
         JLabel wizardLabel = new JLabel("freeze enemy");
+        wizardLabel.setFont(textFont);
         wizardLabel.setForeground(Color.BLUE);
         JLabel archerLabel = new JLabel("more damage");
+        archerLabel.setFont(textFont);
         archerLabel.setForeground(Color.BLUE);
 
         c.gridx = 0;
@@ -236,22 +289,23 @@ public class GameGui extends JFrame implements Gui {
         flush();
         loop = true;
 
-        this.setLayout(new GridBagLayout());
-
-        JButton chooseNameButton = new JButton("Choose name");
-        chooseNameButton.setFont(buttonFont);
-        chooseNameButton.addActionListener(new ChooseNameButtonListener());
-//        chooseName.setBounds(WIDTH / 2 - 75, HEIGHT - 100, 150, 30);
+        JButton chooseNameButton = new JButton("CHOOSE NAME");
+        chooseNameButton.addActionListener(e -> {
+            Hero.getHero().setName(textField.getText());
+            if (Hero.validate(false)) {
+                loop = false;
+                MainController.guiActions.add(textField.getText());
+                System.out.println(MainController.guiActions);
+            } else {
+                label.setText("Name must be 3-16 characters A-z;0-9 symbols!");
+            }
+        });
 
         textField = new JTextField(16);
-//        textField.setSize(150, 30);
-//        textField.setBounds(WIDTH / 2 - 75, HEIGHT - 150, 150, 30);
 
         label = new JLabel();
         label.setFocusable(false);
         label.setMinimumSize(new Dimension(500, 30));
-//        label.setSize(500, 30);
-//        label.setBounds(WIDTH / 2 - 140, HEIGHT - 200, 500, 30);
         label.setForeground(Color.red);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -275,43 +329,58 @@ public class GameGui extends JFrame implements Gui {
         flush();
         loop = true;
 
+        this.setLayout(new GridBagLayout());
+
         JComboBox<String> comboBox = new JComboBox<>();
-        comboBox.setFont(buttonFont);
-        comboBox.setBounds(WIDTH / 2 - 65, HEIGHT - 300, 130, 150);
+        comboBox.setFocusable(false);
+        comboBox.setPreferredSize(new Dimension(150, 30));
+        comboBox.setFont(textFont);
 
         List<Hero> heroes = new LinkedList<>();
-        try {
-            heroes = GameDb.getHeroes();
-            for (Hero hero : heroes) {
-                comboBox.addItem(hero.getName());
-            }
-        } catch (SQLException ignored) { }
+        heroes = GameDb.getHeroes();
+        for (Hero hero : heroes) {
+            comboBox.addItem(hero.getName());
+        }
 
-        JButton selectButton = new JButton("Select");
-        selectButton.setFont(buttonFont);
+        JButton selectButton = new JButton("SELECT");
         List<Hero> finalHeroes = heroes;
         selectButton.addActionListener(e -> {
             if (comboBox.getSelectedItem() != null) {
                 for (Hero hero : finalHeroes) {
                     if (hero.getName().equals(comboBox.getSelectedItem())) {
                         setSelectedHero(hero);
+                        MainController.guiActions.add("select");
                         break;
                     }
                 }
             }
-            MainController.guiActions.add("select");
             setLoop(false);
         });
-        selectButton.setBounds(WIDTH - 400, HEIGHT - 100, 100, 30);
 
-        JButton createButton = new JButton("Create");
-        createButton.setFont(buttonFont);
-        createButton.addActionListener(new CreateHeroButtonListener());
-        createButton.setBounds(WIDTH - 200, HEIGHT - 100, 100, 30);
+        JButton createButton = new JButton("CREATE");
+        createButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loop = false;
+                MainController.guiActions.add("create");
+            }
+        });
 
-        this.add(comboBox);
-        this.add(createButton);
-        this.add(selectButton);
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.fill = GridBagConstraints.CENTER;
+        c.gridx = 2;
+        c.gridy = 0;
+        this.add(comboBox, c);
+        c.fill = GridBagConstraints.WEST;
+        c.gridy = 1;
+        c.gridx = 1;
+        this.add(Box.createVerticalStrut(50), c);
+        this.add(createButton, c);
+        c.fill = GridBagConstraints.EAST;
+        c.gridx = -2;
+        this.add(Box.createVerticalStrut(50), c);
+        this.add(selectButton, c);
 
         this.setVisible(true);
         this.repaint();
@@ -327,9 +396,8 @@ public class GameGui extends JFrame implements Gui {
         swingyLabel.setFont(new Font("Courier", Font.PLAIN, 35));
         swingyLabel.setBounds(WIDTH / 2 - 65, HEIGHT - 300, 130, 150);
 
-        JButton continueButton = new JButton("Continue");
-        continueButton.setFont(buttonFont);
-        continueButton.addActionListener(new ContinueButtonListener());
+        JButton continueButton = new JButton("CONTINUE");
+        continueButton.addActionListener(e -> loop = false);
         continueButton.setBounds(WIDTH / 2 - 100, HEIGHT - 100, 200, 30);
 
         this.add(swingyLabel);
@@ -372,7 +440,7 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public void attack(CharacterClass characterClass, String name, Character enemy, int damage) {
-        battleTextArea.append(characterClass.getGameClass() + " '" + name + "' attacks " +
+        battleTextArea.setText(characterClass.getGameClass() + " '" + name + "' attacks " +
                 enemy.getCharacterClass().getGameClass() + " " + enemy.getName() + " with damage " + damage + "\n\n");
     }
 
@@ -394,19 +462,19 @@ public class GameGui extends JFrame implements Gui {
     @Override
     public void battleWin() {
         this.setVisible(true);
-        battleTextArea.append("YOU'VE WON THE BATTLE!\n\n");
+        battleTextArea.append("You've won the battle!\n\n");
     }
 
     @Override
     public void battleLost(Villain villain) {
         this.setVisible(true);
-        battleTextArea.append("VILLAIN HAS " + villain.getHp() + " HEALTH POINTS\n\n");
+        battleTextArea.append("Villain has " + villain.getHp() + " health points\n\n");
     }
 
     @Override
     public void playerDied() {
         JOptionPane.showMessageDialog(null,
-                "YOU DIED. GAME OVER ON LEVEL " + Hero.getHero().getLevel());
+                "You died. game over on level " + Hero.getHero().getLevel());
     }
 
     @Override
@@ -417,7 +485,7 @@ public class GameGui extends JFrame implements Gui {
     @Override
     public void pickPrize(String prizeName) {
         int reply = JOptionPane.showConfirmDialog(null,
-                prizeName + " HAS DROPPED FROM KILLED ENEMY. WOULD YOU LIKE TO TAKE IT?",
+                prizeName + " has dropped from killed enemy. would you like to take it?",
                         "Pick Prize",
                 JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
@@ -474,36 +542,6 @@ public class GameGui extends JFrame implements Gui {
     public boolean isLoop() {
         return loop;
     }
-
-    private class ChooseNameButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Hero.getHero().setName(textField.getText());
-            if (Hero.validate(false)) {
-                loop = false;
-                MainController.guiActions.add(textField.getText());
-                System.out.println(MainController.guiActions);
-            } else {
-                label.setText("Name must be 3-16 characters A-z;0-9 symbols!");
-            }
-        }
-    }
-
-    private class CreateHeroButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MainController.guiActions.add("create");
-            setLoop(false);
-        }
-    }
-
-    private class ContinueButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            setLoop(false);
-        }
-    }
-
 
     @Override
     public void finalize() throws Throwable {

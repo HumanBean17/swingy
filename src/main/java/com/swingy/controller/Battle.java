@@ -25,6 +25,7 @@ public class Battle {
         while (true) {
             Hero.getHero().attack(villain);
             if (villain.getHp() <= 0) {
+                villain.setHp(0);
                 Main.gui.battleWin();
                 Hero.getHero().addExperience(villain.getLevel() * 300 + 200);
                 Hero.getHero().setHp(Hero.getHero().getMaxHp());
@@ -35,12 +36,13 @@ public class Battle {
             }
             villain.attack(Hero.getHero());
             if (Hero.getHero().getHp() <= 0) {
+                Hero.getHero().setHp(0);
                 Main.gui.battleLost(villain);
                 isHeroWon = false;
                 break;
             }
             try {
-                Thread.sleep(250L);
+                Thread.sleep(350L);
             } catch (InterruptedException exception) {
                 exception.printStackTrace();
             }

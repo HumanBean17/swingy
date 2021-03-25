@@ -18,7 +18,7 @@ public class MainController {
 
     public volatile static Queue<String> guiActions = new LinkedList<>();
 
-    private static final Scanner scanner = new Scanner(System.in);
+    public static final Scanner scanner = new Scanner(System.in);
 
     public boolean battleHandler(Villain villain) {
         String userInput;
@@ -57,7 +57,6 @@ public class MainController {
             Main.gui.pickMovement();
             userInput = scanner.next().toLowerCase();
         } else {
-            System.out.println(guiActions);
             while (guiActions.isEmpty());
             userInput = guiActions.remove();
         }
@@ -86,7 +85,6 @@ public class MainController {
         } else if (userInput.startsWith("i")) {
             Main.gui.info(hero);
         }
-        System.out.println(direction);
         return direction;
     }
 
@@ -115,24 +113,26 @@ public class MainController {
 
     public Hero pickHero(List<Hero> heroes) {
         if (!Main.gui.isGui()) {
-            while (true) {
-                Main.gui.pickHero(heroes);
-                String userInput = scanner.next();
-                for (Hero hero : heroes) {
-                    if (hero.getName().equals(userInput)) {
-                        return hero;
-                    }
+            Main.gui.pickHero(heroes);
+            String userInput = scanner.next();
+            for (Hero hero : heroes) {
+                if (hero.getName().equals(userInput)) {
+                    return hero;
                 }
             }
+            return null;
         } else {
-            while (guiActions.isEmpty());
+            if (guiActions.isEmpty())
+                return null;
             return Main.gui.getSelectedHero();
         }
     }
 
     public String pickName() {
-        if (!Main.gui.isGui())
+        if (!Main.gui.isGui()) {
+            Main.gui.pickName();
             return scanner.next();
+        }
         else
             Main.gui.pickName();
         while (guiActions.isEmpty());
@@ -182,6 +182,10 @@ public class MainController {
             String userInput = MainController.guiActions.remove();
             return userInput.equals("yes");
         }
+    }
+
+    public static void enterForContinue() {
+        try { System.in.read(); } catch(Exception e) {}
     }
 
     public enum HeroPick {

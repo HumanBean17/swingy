@@ -6,6 +6,8 @@ import com.swingy.view.GameGui;
 import com.swingy.view.Gui;
 import com.swingy.view.TermGui;
 
+import java.util.LinkedList;
+
 public class Main {
 
     public static Gui gui;
@@ -18,6 +20,7 @@ public class Main {
             gui.finalize();
         } catch (Throwable ignored) {}
         gui = null;
+        Game.setEnemies(new LinkedList<>());
         controller = new MainController();
         main(args);
     }

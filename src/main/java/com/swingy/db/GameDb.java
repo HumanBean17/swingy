@@ -1,6 +1,7 @@
 package com.swingy.db;
 
 import com.swingy.Main;
+import com.swingy.controller.MainController;
 import com.swingy.exception.ConnectionFailedException;
 import com.swingy.exception.PlayerNotFoundException;
 import com.swingy.map.Coordinates;
@@ -35,7 +36,11 @@ public class GameDb {
             connection = DriverManager.getConnection(url, properties);
             updateTables();
         } catch (SQLException ex) {
-            Main.gui.printErrorMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage("Connection to database failed. Game progress won't be saved", true);
+            if (!Main.gui.isGui()) {
+                MainController.enterForContinue();
+            }
+            //Main.gui.printErrorMessage(ex.getMessage(), true);
         }
         return connection;
     }
@@ -66,12 +71,85 @@ public class GameDb {
                 connection.close();
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
         }
     }
 
-    public static void updateTables() {
+    public static boolean updateTables() {
+        PreparedStatement statement = null;
+        boolean isSuccess = true;
+        try {
+            if (connection == null)
+                throw new ConnectionFailedException();
 
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS COORDINATES(" +
+                    "    ID UUID, " +
+                    "    X INTEGER, " +
+                    "    Y INTEGER, " +
+                    "    CONSTRAINT ID_COORDINATES_PK PRIMARY KEY (ID))");
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS WEAPON( " +
+                    "    ID UUID, " +
+                    "    ATTACK INTEGER, " +
+                    "    NAME VARCHAR, " +
+                    "    CONSTRAINT ID_WEAPON_PK PRIMARY KEY (ID))");
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS HELM( " +
+                    "    ID UUID, " +
+                    "    HIT_POINTS INTEGER, " +
+                    "    NAME VARCHAR, " +
+                    "    CONSTRAINT ID_HELM_PK PRIMARY KEY (ID))");
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS CHARACTER_CLASS( " +
+                    "    ID UUID, " +
+                    "    CLASS_NAME VARCHAR, " +
+                    "    SPECIAL_TALENT VARCHAR, " +
+                    "    CONSTRAINT ID_CHARACTER_CLASS_PK PRIMARY KEY (ID))");
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS ARMOR( " +
+                    "    ID UUID, " +
+                    "    DEFENSE INTEGER, " +
+                    "    NAME VARCHAR, " +
+                    "    CONSTRAINT ID_ARMOR_PK PRIMARY KEY (ID))");
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS HERO( " +
+                    "    ID UUID, " +
+                    "    COORDINATES UUID, " +
+                    "    CHARACTER_CLASS UUID, " +
+                    "    WEAPON UUID, " +
+                    "    ARMOR UUID, " +
+                    "    HELM UUID, " +
+                    "    LEVEL INTEGER, " +
+                    "    EXPERIENCE INTEGER, " +
+                    "    ATTACK INTEGER, " +
+                    "    DEFENSE INTEGER, " +
+                    "    HIT_POINTS INTEGER, " +
+                    "    MAX_HP INTEGER, " +
+                    "    HP INTEGER, " +
+                    "    MANA INTEGER, " +
+                    "    NAME VARCHAR, " +
+                    "    CONSTRAINT COORDINATES_FK FOREIGN KEY (COORDINATES) REFERENCES COORDINATES(ID), " +
+                    "    CONSTRAINT CHARACTER_CLASS_FK FOREIGN KEY (CHARACTER_CLASS) REFERENCES CHARACTER_CLASS(ID), " +
+                    "    CONSTRAINT WEAPON_FK FOREIGN KEY (WEAPON) REFERENCES WEAPON(ID), " +
+                    "    CONSTRAINT ARMOR_FK FOREIGN KEY (ARMOR) REFERENCES ARMOR(ID), " +
+                    "    CONSTRAINT HELM_FK FOREIGN KEY (HELM) REFERENCES HELM(ID), " +
+                    "    CONSTRAINT NAME_UC UNIQUE (NAME), " +
+                    "    CONSTRAINT ID_NAME_HERO_PK PRIMARY KEY (ID))");
+            statement.executeUpdate();
+
+        } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
+            //Main.gui.printErrorMessage("Connection to database failed. Game progress won't be saved", true);
+            //Main.gui.printErrorMessage(ex.getMessage(), true);
+            isSuccess = false;
+        } finally {
+            closeStatement(statement);
+        }
+        return isSuccess;
     }
 
     public static Hero selectHero(String name) {
@@ -81,7 +159,6 @@ public class GameDb {
         try {
             if (connection == null)
                 throw new ConnectionFailedException();
-            updateTables();
 
             statement = connection.prepareStatement(
                     "SELECT h.id, " +
@@ -120,7 +197,7 @@ public class GameDb {
             hero.setHp(resultSet.getInt("hp"));
             hero.setMana(resultSet.getInt("mana"));
         } catch (SQLException | NullPointerException | ConnectionFailedException | PlayerNotFoundException ex) {
-            Main.gui.printErrorMessage(ex.getMessage(), true);
+            //Main.gui.printErrorMessage(ex.getMessage(), true);
             hero = null;
         } finally {
             closeResultSet(resultSet);
@@ -135,7 +212,6 @@ public class GameDb {
         try {
             if (connection == null)
                 throw new ConnectionFailedException();
-            updateTables();
 
             statement = connection.prepareStatement(
                     "INSERT INTO HERO " +
@@ -158,7 +234,7 @@ public class GameDb {
             statement.setString(15, hero.getName());
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            Main.gui.printErrorMessage(ex.getMessage(), true);
+            //Main.gui.printErrorMessage(ex.getMessage(), true);
             isSuccess = false;
         } finally {
             closeStatement(statement);
@@ -215,7 +291,7 @@ public class GameDb {
         return isSuccess;
     }
 
-    public static List<Hero> getHeroes() throws SQLException {
+    public static List<Hero> getHeroes() {
         List<Hero> heroes = new LinkedList<>();
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -223,7 +299,6 @@ public class GameDb {
         try {
             if (connection == null)
                 throw new ConnectionFailedException();
-            updateTables();
 
             statement = connection.prepareStatement(
                     "SELECT h.id, " +
@@ -259,7 +334,7 @@ public class GameDb {
                 heroes.add(hero);
             }
         } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
-            Main.gui.printErrorMessage(ex.getMessage(), true);
+            //Main.gui.printErrorMessage(ex.getMessage(), true);
         } finally {
             closeResultSet(resultSet);
             closeStatement(statement);
@@ -282,10 +357,10 @@ public class GameDb {
 
 //            statement = connection.prepareStatement(
 //                    "DELETE FROM
-//            )
+//            );
 
         } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
-            Main.gui.printErrorMessage(ex.getMessage(), true);
+            //Main.gui.printErrorMessage(ex.getMessage(), true);
         } finally {
             closeStatement(statement);
         }

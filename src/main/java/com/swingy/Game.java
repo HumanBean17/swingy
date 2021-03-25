@@ -47,11 +47,11 @@ public class Game {
                     Main.restartTheGame();
                 }
             }
-            if (direction == MoveDirection.BORDER && checkNextLevel()) {
+            boolean isLevelUp = checkNextLevel();
+            if (isLevelUp)
                 Main.gui.levelUpMessage();
-                System.out.println(Hero.getHero().getLevel());
-                if (Hero.getHero().getLevel() >= 7) {
-                    System.out.println("finish");
+            if (direction == MoveDirection.BORDER && isLevelUp) {
+                if (Hero.getHero().getLevel() + 1 >= 7) {
                     Main.gui.gameFinishedMessage();
                     Main.restartTheGame();
                 } else {
@@ -75,34 +75,26 @@ public class Game {
 
     public void run() {
         Main.gui.drawHello();
-        MainController.HeroPick heroPick = Main.controller.menu();
+        //GameDb.updateTables();
         while (true) {
-            List<Hero> heroes = new LinkedList<>();
-            try {
-                heroes.addAll(GameDb.getHeroes());
-            } catch (SQLException ex) {
-                Main.gui.printErrorMessage(ex.getMessage(), true);
-            }
+            MainController.HeroPick heroPick = Main.controller.menu();
+            List<Hero> heroes = new LinkedList<>(GameDb.getHeroes());
             if (heroPick.equals(MainController.HeroPick.CREATE)) {
                 Hero hero = Hero.createHero();
                 if (hero == null) {
                     continue;
                 }
-                if (!GameDb.insertHero(hero)) {
-                    Main.gui.printErrorMessage("ERROR WHILE SAVING HERO TO DATABASE. GAME PROGRESS WILL NOT BE SAVED AFTER EXIT THE GAME.", true);
-                }
+                GameDb.insertHero(hero);
                 Map.getMap().createMap(true);
                 break;
             } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
                 Hero hero = Main.controller.pickHero(heroes);
                 if (hero == null) {
-                    Main.gui.printErrorMessage("Error while selecting a hero.", true);
-                    Main.restartTheGame();
+                    //Main.gui.printErrorMessage("Error while selecting a hero.", true);
+                    continue;
                 }
                 Map.getMap().createMap(false);
                 break;
-            } else if (heroes.isEmpty()) {
-                Main.gui.printErrorMessage("NO SAVED HEROES FOUND.", true);
             }
         }
         gameCycle();
@@ -139,6 +131,10 @@ public class Game {
     public static int getNextLevelExperience() {
         return ((Hero.getHero().getLevel() + 1) * 1000) +
                 (int)Math.pow(Hero.getHero().getLevel(), 2) * 450;
+    }
+
+    public static void setEnemies(List<Villain> enemies) {
+        Game.enemies = enemies;
     }
 
     public static List<Villain> getEnemies() {
