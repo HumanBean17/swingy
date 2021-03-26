@@ -19,6 +19,8 @@ public class Game {
 
     private static List<Villain> enemies = new LinkedList<>();
 
+    public static volatile List<Hero> heroes = new LinkedList<>();
+
     private static Coordinates heroLastPos = null;
 
     public static void createVillain(Coordinates coordinates) {
@@ -74,11 +76,12 @@ public class Game {
     }
 
     public void run() {
+        GameDb.updateTables();
         Main.gui.drawHello();
-        //GameDb.updateTables();
         while (true) {
+            heroes.clear();
+            heroes.addAll(GameDb.getHeroes());
             MainController.HeroPick heroPick = Main.controller.menu();
-            List<Hero> heroes = new LinkedList<>(GameDb.getHeroes());
             if (heroPick.equals(MainController.HeroPick.CREATE)) {
                 Hero hero = Hero.createHero();
                 if (hero == null) {

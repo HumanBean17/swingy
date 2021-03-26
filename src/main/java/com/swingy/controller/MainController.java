@@ -98,7 +98,9 @@ public class MainController {
             }
         } else {
             Main.gui.drawMenu();
+            System.out.println("before draw menu");
             while (guiActions.isEmpty());
+            System.out.println("after draw menu");
             return heroPickCondition(guiActions.remove());
         }
     }
@@ -122,8 +124,6 @@ public class MainController {
             }
             return null;
         } else {
-            if (guiActions.isEmpty())
-                return null;
             return Main.gui.getSelectedHero();
         }
     }

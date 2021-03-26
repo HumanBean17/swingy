@@ -336,19 +336,18 @@ public class GameGui extends JFrame implements Gui {
         comboBox.setPreferredSize(new Dimension(150, 30));
         comboBox.setFont(textFont);
 
-        List<Hero> heroes = new LinkedList<>();
-        heroes = GameDb.getHeroes();
+        List<Hero> heroes = Game.heroes;
         for (Hero hero : heroes) {
             comboBox.addItem(hero.getName());
         }
 
         JButton selectButton = new JButton("SELECT");
-        List<Hero> finalHeroes = heroes;
         selectButton.addActionListener(e -> {
             if (comboBox.getSelectedItem() != null) {
-                for (Hero hero : finalHeroes) {
+                for (Hero hero : heroes) {
                     if (hero.getName().equals(comboBox.getSelectedItem())) {
                         setSelectedHero(hero);
+                        System.out.println("on select");
                         MainController.guiActions.add("select");
                         break;
                     }
@@ -424,7 +423,9 @@ public class GameGui extends JFrame implements Gui {
 
     @Override
     public Hero getSelectedHero() {
-        return selectedHero;
+        Hero returnVal = selectedHero;
+        selectedHero = null;
+        return returnVal;
     }
 
     @Override

@@ -34,13 +34,12 @@ public class GameDb {
         try {
             String url = "jdbc:postgresql://localhost/postgres";
             connection = DriverManager.getConnection(url, properties);
-            updateTables();
         } catch (SQLException ex) {
             Main.gui.printErrorMessage("Connection to database failed. Game progress won't be saved", true);
             if (!Main.gui.isGui()) {
                 MainController.enterForContinue();
             }
-            //Main.gui.printErrorMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
         }
         return connection;
     }
@@ -144,7 +143,7 @@ public class GameDb {
 
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
             //Main.gui.printErrorMessage("Connection to database failed. Game progress won't be saved", true);
-            //Main.gui.printErrorMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
             isSuccess = false;
         } finally {
             closeStatement(statement);
@@ -197,7 +196,7 @@ public class GameDb {
             hero.setHp(resultSet.getInt("hp"));
             hero.setMana(resultSet.getInt("mana"));
         } catch (SQLException | NullPointerException | ConnectionFailedException | PlayerNotFoundException ex) {
-            //Main.gui.printErrorMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
             hero = null;
         } finally {
             closeResultSet(resultSet);
@@ -234,7 +233,7 @@ public class GameDb {
             statement.setString(15, hero.getName());
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            //Main.gui.printErrorMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
             isSuccess = false;
         } finally {
             closeStatement(statement);
@@ -251,11 +250,11 @@ public class GameDb {
 
             statement = connection.prepareStatement(
                     "UPDATE HERO SET " +
-                            "coordinates = ?, " + //1
-                            "character_class = ?, " + //2
-                            "weapon = ?, " + //3
-                            "armor = ?, " + //4
-                            "helm = ?, " + //5
+//                            "coordinates = ?::UUID, " + //1
+//                            "character_class = ?::UUID, " + //2
+//                            "weapon = ?::UUID, " + //3
+//                            "armor = ?::UUID, " + //4
+//                            "helm = ?::UUID, " + //5
                             "level = ?, " + //6
                             "experience = ?, " + //7
                             "attack = ?, " + //8
@@ -265,24 +264,29 @@ public class GameDb {
                             "hp = ?, " + //12
                             "mana = ? " + //13
                         "WHERE name = ?"); //14
-            statement.setString(1, updateCoordinates(hero.getCoordinates()).toString());
-            statement.setString(2, updateCharacterClass(hero, hero.getCharacterClass()).toString());
-            statement.setString(3, updateWeapon(hero.getWeapon()).toString());
-            statement.setString(4, updateArmor(hero.getArmor()).toString());
-            statement.setString(5, updateHelm(hero.getHelm()).toString());
-            statement.setInt(6, hero.getLevel());
-            statement.setInt(7, hero.getExperience());
-            statement.setInt(8, hero.getAttack());
-            statement.setInt(9, hero.getDefense());
-            statement.setInt(10, hero.getHitPoints());
-            statement.setInt(11, hero.getMaxHp());
-            statement.setInt(12, hero.getHp());
-            statement.setInt(13, hero.getMana());
-            statement.setString(14, hero.getName());
+//            statement.setString(1, updateCoordinates(hero.getCoordinates()).toString());
+//            statement.setString(2, updateCharacterClass(hero, hero.getCharacterClass()).toString());
+//            statement.setString(3, updateWeapon(hero.getWeapon()).toString());
+//            statement.setString(4, updateArmor(hero.getArmor()).toString());
+//            statement.setString(5, updateHelm(hero.getHelm()).toString());
+            updateCoordinates(hero.getCoordinates());
+            updateCharacterClass(hero, hero.getCharacterClass());
+            updateWeapon(hero.getWeapon());
+            updateArmor(hero.getArmor());
+            updateHelm(hero.getHelm());
+            statement.setInt(1, hero.getLevel());
+            statement.setInt(2, hero.getExperience());
+            statement.setInt(3, hero.getAttack());
+            statement.setInt(4, hero.getDefense());
+            statement.setInt(5, hero.getHitPoints());
+            statement.setInt(6, hero.getMaxHp());
+            statement.setInt(7, hero.getHp());
+            statement.setInt(8, hero.getMana());
+            statement.setString(9, hero.getName());
 
             statement.executeUpdate();
         } catch (NullPointerException | SQLException | ConnectionFailedException ex) {
-            //Main.gui.printError(ex.getMessage());
+            Main.gui.printErrorMessage(ex.getMessage(), true);
             isSuccess = false;
         } finally {
             //closeConnection(connection);
@@ -334,7 +338,7 @@ public class GameDb {
                 heroes.add(hero);
             }
         } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
-            //Main.gui.printErrorMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), false);
         } finally {
             closeResultSet(resultSet);
             closeStatement(statement);
@@ -355,12 +359,8 @@ public class GameDb {
             statement.setString(1, Hero.getHero().getName());
             statement.executeUpdate();
 
-//            statement = connection.prepareStatement(
-//                    "DELETE FROM
-//            );
-
         } catch (SQLException | NullPointerException | ConnectionFailedException ex) {
-            //Main.gui.printErrorMessage(ex.getMessage(), true);
+            Main.gui.printErrorMessage(ex.getMessage(), true);
         } finally {
             closeStatement(statement);
         }
@@ -370,8 +370,8 @@ public class GameDb {
         PreparedStatement statement = connection.prepareStatement(
                 "UPDATE HELM " +
                         "SET hit_points = ?, " +
-                        "name = ?" +
-                        "WHERE id = ?");
+                        "name = ? " +
+                        "WHERE id = ?::UUID");
         statement.setInt(1, helm.getHitPoints());
         statement.setString(2, helm.getName());
         statement.setString(3, helm.getId().toString());
@@ -383,8 +383,8 @@ public class GameDb {
         PreparedStatement statement = connection.prepareStatement(
                 "UPDATE ARMOR " +
                         "SET defense = ?, " +
-                        "name = ?" +
-                        "WHERE id = ?");
+                        "name = ? " +
+                        "WHERE id = ?::UUID");
         statement.setInt(1, armor.getDefense());
         statement.setString(2, armor.getName());
         statement.setString(3, armor.getId().toString());
@@ -397,7 +397,7 @@ public class GameDb {
                 "UPDATE WEAPON " +
                         "SET attack = ?, " +
                         "name = ? " +
-                        "WHERE id = ?");
+                        "WHERE id = ?::UUID");
         statement.setInt(1, weapon.getAttack());
         statement.setString(2, weapon.getName());
         statement.setString(3, weapon.getId().toString());
@@ -410,7 +410,7 @@ public class GameDb {
                 "UPDATE CHARACTER_CLASS " +
                         "SET class_name = ?, " +
                         "special_talent = ? " +
-                     "WHERE id = ?");
+                     "WHERE id = ?::UUID");
         statement.setString(1, characterClass.getGameClass().toString());
         statement.setString(2, characterClass.getSpecialTalent(hero).toString());
         statement.setString(3, characterClass.getId().toString());
@@ -421,9 +421,9 @@ public class GameDb {
     private static UUID updateCoordinates(Coordinates coordinates) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
                 "UPDATE COORDINATES SET " +
-                        "x = ?," +
-                        "y = ?" +
-                     "WHERE id = ?");
+                        "x = ?, " +
+                        "y = ? " +
+                     "WHERE id = ?::UUID");
         statement.setInt(1, coordinates.getX());
         statement.setInt(2, coordinates.getY());
         statement.setString(3, coordinates.getId().toString());
