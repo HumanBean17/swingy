@@ -15,19 +15,16 @@ import java.util.List;
 
 public class Game {
 
-    public static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private Coordinates heroLastPos = null;
+    private List<Villain> enemies = new LinkedList<>();
+    private List<Hero> heroes = new LinkedList<>();
 
-    private static List<Villain> enemies = new LinkedList<>();
-
-    public static volatile List<Hero> heroes = new LinkedList<>();
-
-    private static Coordinates heroLastPos = null;
-
-    public static void createVillain(Coordinates coordinates) {
+    public void createVillain(Coordinates coordinates) {
         enemies.add(new Villain(coordinates));
     }
 
-    public static void deleteVillain(Villain villain) {
+    public void deleteVillain(Villain villain) {
         Map.getMap().setMapCell(villain.getCoordinates().getY(), villain.getCoordinates().getX(), '.');
         enemies.remove(villain);
     }
@@ -45,15 +42,13 @@ public class Game {
                     enemies.remove(villain);
                 }
                 else {
-                    GameDb.deleteHero();
+                    Main.gameDb.deleteHero();
                     Main.restartTheGame();
                 }
             }
-            boolean isLevelUp = checkNextLevel();
-            if (isLevelUp)
+            if (direction == MoveDirection.BORDER && checkNextLevel()) {
                 Main.gui.levelUpMessage();
-            if (direction == MoveDirection.BORDER && isLevelUp) {
-                if (Hero.getHero().getLevel() + 1 >= 7) {
+                if (Hero.getHero().getLevel() >= 6) {
                     Main.gui.gameFinishedMessage();
                     Main.restartTheGame();
                 } else {
@@ -63,7 +58,7 @@ public class Game {
                 Hero.getHero().resetHeroPos();
                 Map.getMap().generateMap();
             }
-            GameDb.updateHero(Hero.getHero());
+            Main.gameDb.updateHero(Hero.getHero());
         }
         Main.restartTheGame();
     }
@@ -76,24 +71,25 @@ public class Game {
     }
 
     public void run() {
-        GameDb.updateTables();
         Main.gui.drawHello();
         while (true) {
             heroes.clear();
-            heroes.addAll(GameDb.getHeroes());
+            heroes.addAll(Main.gameDb.getHeroes());
             MainController.HeroPick heroPick = Main.controller.menu();
             if (heroPick.equals(MainController.HeroPick.CREATE)) {
                 Hero hero = Hero.createHero();
                 if (hero == null) {
                     continue;
                 }
-                GameDb.insertHero(hero);
+                if (!Main.gameDb.insertHero(hero)) {
+                    Main.gui.printErrorMessage("Error while saving hero", true);
+                    continue;
+                }
                 Map.getMap().createMap(true);
                 break;
             } else if (heroPick.equals(MainController.HeroPick.SELECT)) {
-                Hero hero = Main.controller.pickHero(heroes);
-                if (hero == null) {
-                    //Main.gui.printErrorMessage("Error while selecting a hero.", true);
+                Hero.setHero(Main.controller.pickHero(heroes));
+                if (Hero.getHero() == null) {
                     continue;
                 }
                 Map.getMap().createMap(false);
@@ -104,7 +100,7 @@ public class Game {
     }
 
     public Villain checkBattle() {
-        List<Villain> villains = Game.getEnemies();
+        List<Villain> villains = getEnemies();
         Villain result = null;
         for (Villain villain : villains) {
             if (villain.getCoordinates().getX().equals(Hero.getHero().getCoordinates().getX()) &&
@@ -116,8 +112,8 @@ public class Game {
         return result;
     }
 
-    public static boolean isVillain(Coordinates coordinates) {
-        List<Villain> villains = Game.getEnemies();
+    public boolean isVillain(Coordinates coordinates) {
+        List<Villain> villains = getEnemies();
         for (Villain villain : villains) {
             if (villain.getCoordinates().getX().equals(coordinates.getX()) &&
                     villain.getCoordinates().getY().equals(coordinates.getY())) {
@@ -127,28 +123,45 @@ public class Game {
         return false;
     }
 
-    public static boolean checkNextLevel() {
+    public boolean checkNextLevel() {
         return Hero.getHero().getExperience() >= getNextLevelExperience();
     }
 
-    public static int getNextLevelExperience() {
+    public int getNextLevelExperience() {
         return ((Hero.getHero().getLevel() + 1) * 1000) +
                 (int)Math.pow(Hero.getHero().getLevel(), 2) * 450;
     }
 
-    public static void setEnemies(List<Villain> enemies) {
-        Game.enemies = enemies;
+    public void setEnemies(List<Villain> enemies) {
+        this.enemies = enemies;
     }
 
-    public static List<Villain> getEnemies() {
+    public List<Villain> getEnemies() {
         return enemies;
     }
 
-    public static Coordinates getHeroLastPos() {
+    public Coordinates getHeroLastPos() {
         return heroLastPos;
     }
 
-    public static void setHeroLastPos(Coordinates heroLastPos) {
-        Game.heroLastPos = heroLastPos;
+    public void setHeroLastPos(Coordinates heroLastPos) {
+        this.heroLastPos = heroLastPos;
+    }
+
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
+    public List<Hero> getHeroes() {
+        return heroes;
+    }
+
+    public void setHeroes(List<Hero> heroes) {
+        this.heroes = heroes;
     }
 }
+

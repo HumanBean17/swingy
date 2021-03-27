@@ -1,6 +1,7 @@
 package com.swingy;
 
 import com.swingy.controller.MainController;
+import com.swingy.db.GameDb;
 import com.swingy.model.characters.Hero;
 import com.swingy.view.GameGui;
 import com.swingy.view.Gui;
@@ -10,8 +11,11 @@ import java.util.LinkedList;
 
 public class Main {
 
+    public static GameDb gameDb;
     public static Gui gui;
-    public static MainController controller = new MainController();
+    public static Game game;
+    public static MainController controller;
+
     private static String[] args;
 
     public static void restartTheGame() {
@@ -20,8 +24,9 @@ public class Main {
             gui.finalize();
         } catch (Throwable ignored) {}
         gui = null;
-        Game.setEnemies(new LinkedList<>());
-        controller = new MainController();
+        game = null;
+        gameDb = null;
+        controller = null;
         main(args);
     }
 
@@ -45,10 +50,16 @@ public class Main {
 
     public static void main(String[] args) {
         Main.args = args;
+
         gui = validateArgs();
         if (gui == null)
             return;
-        Game game = new Game();
+
+        gameDb = new GameDb();
+        gameDb.updateTables();
+
+        game = new Game();
+        controller = new MainController();
         game.run();
     }
 }

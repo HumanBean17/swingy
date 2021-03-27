@@ -36,19 +36,19 @@ public abstract class Character {
     protected Coordinates coordinates;
 
     @Column(name = "ATTACK")
-    protected Integer attack = 0;
+    protected int attack = 0;
     @Column(name = "DEFENSE")
-    protected Integer defense = 0;
+    protected int defense = 0;
     @Column(name = "HIT_POINTS")
-    protected Integer hitPoints = 0;
+    protected int hitPoints = 0;
 
     @Column(name = "MAX_HP")
-    protected Integer maxHp = 0;
+    protected int maxHp = 0;
     @Column(name = "HP")
-    protected Integer hp = 0;
+    protected int hp = 0;
 
     @Column(name = "MANA")
-    protected Integer mana = 0;
+    protected int mana = 0;
 
     @Column(name = "CHARACTER_CLASS")
     protected CharacterClass characterClass;
@@ -67,7 +67,7 @@ public abstract class Character {
     protected Helm helm;
 
     @Column(name = "LEVEL")
-    protected Integer level = 0;
+    protected int level = 0;
 
     public Character() {
         this.id = UUID.randomUUID();
@@ -104,7 +104,7 @@ public abstract class Character {
     }
 
     public static boolean validate(boolean errorMessageInvoke) {
-        Set<ConstraintViolation<Character>> violations = Game.validator.validate(Hero.getHero());
+        Set<ConstraintViolation<Character>> violations = Main.game.getValidator().validate(Hero.getHero());
         boolean result = true;
         for (ConstraintViolation<Character> violation : violations) {
             result = false;

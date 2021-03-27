@@ -24,7 +24,6 @@ public class Villain extends Character {
                 new Random().nextInt(Hero.getHero().getDefense());//new Random().nextInt(3) + new Random().nextInt(5) * this.getLevel();
         this.hitPoints = new Random().nextInt(3) +
                 new Random().nextInt(2) * this.getLevel();
-        //System.out.println("villain attack " + this.attack);
         this.name = "villain";
         setCoordinates(coordinates);
     }

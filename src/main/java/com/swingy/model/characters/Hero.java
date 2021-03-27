@@ -47,8 +47,6 @@ public class Hero extends Character {
     }
 
     public static Hero getHero() {
-        if (hero == null)
-            createHero();
         return hero;
     }
 

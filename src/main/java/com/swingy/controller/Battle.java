@@ -30,8 +30,8 @@ public class Battle {
                 Hero.getHero().addExperience(villain.getLevel() * 300 + 200);
                 Hero.getHero().setHp(Hero.getHero().getMaxHp());
                 getPrize(villain, Hero.getHero());
-                Game.deleteVillain(villain);
-                Game.checkNextLevel();
+                Main.game.deleteVillain(villain);
+                Main.game.checkNextLevel();
                 break;
             }
             villain.attack(Hero.getHero());
@@ -53,7 +53,7 @@ public class Battle {
     public static boolean run() {
         boolean isRun = true;
         if (new Random().nextInt(2) != 0) {
-            Hero.getHero().setCoordinates(Game.getHeroLastPos());
+            Hero.getHero().setCoordinates(Main.game.getHeroLastPos());
         } else {
             isRun = false;
         }
@@ -61,10 +61,10 @@ public class Battle {
     }
 
     public static void getPrize(Character enemy, Character hero) {
-        int rand = new Random().nextInt(100);
-        System.out.println(rand);
-        if (rand % 2 == 0) {
-            rand = new Random().nextInt(6);
+        Random randObject = new Random();
+        int rand = randObject.nextInt(100);
+        if (/*rand % 2 == 0*/true) {
+            rand = randObject.nextInt(3);
             Weapon weapon = null;
             Armor armor = null;
             Helm helm = null;
@@ -108,6 +108,14 @@ public class Battle {
                 case 5:
                     if (rand == 0)
                         weapon = getWeaponPrize(hero.getCharacterClass(), 5);
+                    else if (rand == 1)
+                        armor = new IronArmor();
+                    else
+                        helm = new IronHelm();
+                    break;
+                case 6:
+                    if (rand == 0)
+                        weapon = getWeaponPrize(hero.getCharacterClass(), 6);
                     else if (rand == 1)
                         armor = new IronArmor();
                     else

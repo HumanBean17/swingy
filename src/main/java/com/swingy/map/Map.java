@@ -1,6 +1,7 @@
 package com.swingy.map;
 
 import com.swingy.Game;
+import com.swingy.Main;
 import com.swingy.model.characters.Hero;
 
 import java.util.Random;
@@ -19,7 +20,7 @@ public class Map {
                 if (j != size / 2 && i != size / 2
                         && random.nextInt(size * 5) == 0) {
                     map[i][j] = 'V';
-                    Game.createVillain(new Coordinates(j, i));
+                    Main.game.createVillain(new Coordinates(j, i));
                 }
                 else
                     map[i][j] = '.';

@@ -1,6 +1,7 @@
 package com.swingy.view;
 
 import com.swingy.Game;
+import com.swingy.Main;
 import com.swingy.controller.MainController;
 import com.swingy.db.GameDb;
 import com.swingy.map.Map;
@@ -41,7 +42,7 @@ public class GameGui extends JFrame implements Gui {
     public GameGui() {
         super("Swingy");
         this.setFont(new Font("Courier", Font.PLAIN, 16));
-        this.setSize(WIDTH, HEIGHT);
+        this.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(null);
@@ -66,8 +67,8 @@ public class GameGui extends JFrame implements Gui {
         infoString += ("NAME:                " + hero.getName().toUpperCase() + "<br>");
         infoString += ("CLASS:               " + hero.getCharacterClass().getGameClass() + "<br>");
         infoString += ("HEALTH POINTS:       " + hero.getHp() + "/" + Hero.getHero().getMaxHp() + "<br>");
-        infoString += ("LEVEL:               " + hero.getLevel() + "<br>");
-        infoString += ("EXPERIENCE:          " + hero.getExperience() + "/" + Game.getNextLevelExperience() + "<br>");
+        infoString += ("LEVEL:               " + (hero.getLevel() + 1) + "<br>");
+        infoString += ("EXPERIENCE:          " + hero.getExperience() + "/" + Main.game.getNextLevelExperience() + "<br>");
         infoString += ("ATTACK:              " + hero.getAttack() + "<br>");
         infoString += ("DEFENCE:             " + hero.getDefense() + "<br>");
         infoString += ("HIT POINTS:          " + hero.getHitPoints() + "<br>");
@@ -153,9 +154,9 @@ public class GameGui extends JFrame implements Gui {
                 "Start Battle",
                 JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
-            MainController.guiActions.add("fight");
+            Main.controller.addAction("fight");
         } else {
-            MainController.guiActions.add("run");
+            Main.controller.addAction("run");
         }
     }
 
@@ -176,19 +177,19 @@ public class GameGui extends JFrame implements Gui {
 
         upButton.addActionListener(e -> {
             loop = false;
-            MainController.guiActions.add("up");
+            Main.controller.addAction("up");
         });
         downButton.addActionListener(e -> {
             loop = false;
-            MainController.guiActions.add("down");
+            Main.controller.addAction("down");
         });
         leftButton.addActionListener(e -> {
             loop = false;
-            MainController.guiActions.add("left");
+            Main.controller.addAction("left");
         });
         rightButton.addActionListener(e -> {
             loop = false;
-            MainController.guiActions.add("right");
+            Main.controller.addAction("right");
         });
         infoButton.addActionListener(e -> {
             heroInfoFrame(Hero.getHero());
@@ -203,6 +204,7 @@ public class GameGui extends JFrame implements Gui {
         this.add(upButton, c);
         c.gridx = 0;
         c.gridy = 2;
+        c.gridwidth = 1;
         this.add(leftButton, c);
         c.gridx = 1;
         this.add(downButton, c);
@@ -212,6 +214,7 @@ public class GameGui extends JFrame implements Gui {
         c.gridx = 1;
         this.add(infoButton, c);
 
+        this.pack();
         this.setVisible(true);
         this.repaint();
         actionOnPerformedLoop();
@@ -221,27 +224,22 @@ public class GameGui extends JFrame implements Gui {
     public void pickClass() {
         loop = true;
         flush();
-
-        //this.setLayout(new GridBagLayout());
-
+        
         JButton warriorButton = new JButton("WARRIOR");
         JButton wizardButton = new JButton("WIZARD");
         JButton archerButton = new JButton("ARCHER");
 
         warriorButton.addActionListener(e -> {
             loop = false;
-            MainController.guiActions.add("warrior");
-            System.out.println(MainController.guiActions);
+            Main.controller.addAction("warrior");
         });
         wizardButton.addActionListener(e -> {
             loop = false;
-            MainController.guiActions.add("wizard");
-            System.out.println(MainController.guiActions);
+            Main.controller.addAction("wizard");
         });
         archerButton.addActionListener(e -> {
             loop = false;
-            MainController.guiActions.add("archer");
-            System.out.println(MainController.guiActions);
+            Main.controller.addAction("archer");
         });
 
         GridBagConstraints c = new GridBagConstraints();
@@ -294,8 +292,7 @@ public class GameGui extends JFrame implements Gui {
             Hero.getHero().setName(textField.getText());
             if (Hero.validate(false)) {
                 loop = false;
-                MainController.guiActions.add(textField.getText());
-                System.out.println(MainController.guiActions);
+                Main.controller.addAction(textField.getText());
             } else {
                 label.setText("Name must be 3-16 characters A-z;0-9 symbols!");
             }
@@ -336,19 +333,19 @@ public class GameGui extends JFrame implements Gui {
         comboBox.setPreferredSize(new Dimension(150, 30));
         comboBox.setFont(textFont);
 
-        List<Hero> heroes = Game.heroes;
+        List<Hero> heroes = Main.game.getHeroes();
         for (Hero hero : heroes) {
             comboBox.addItem(hero.getName());
         }
 
         JButton selectButton = new JButton("SELECT");
         selectButton.addActionListener(e -> {
+            List<Hero> localHeroes = Main.game.getHeroes();
             if (comboBox.getSelectedItem() != null) {
-                for (Hero hero : heroes) {
+                for (Hero hero : localHeroes) {
                     if (hero.getName().equals(comboBox.getSelectedItem())) {
                         setSelectedHero(hero);
-                        System.out.println("on select");
-                        MainController.guiActions.add("select");
+                        Main.controller.addAction("select");
                         break;
                     }
                 }
@@ -361,7 +358,7 @@ public class GameGui extends JFrame implements Gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loop = false;
-                MainController.guiActions.add("create");
+                Main.controller.addAction("create");
             }
         });
 
@@ -490,9 +487,9 @@ public class GameGui extends JFrame implements Gui {
                         "Pick Prize",
                 JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
-            MainController.guiActions.add("yes");
+            Main.controller.addAction("yes");
         } else {
-            MainController.guiActions.add("no");
+            Main.controller.addAction("no");
         }
     }
 
@@ -504,7 +501,7 @@ public class GameGui extends JFrame implements Gui {
     @Override
     public void levelUpMessage() {
         JOptionPane.showMessageDialog(null,
-                "Level up! You're now level " + Hero.getHero().getLevel() + 1);
+                "Level up! You're now level " + (Hero.getHero().getLevel() + 1));
     }
 
     @Override

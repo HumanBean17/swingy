@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class MainController {
 
-    public volatile static Queue<String> guiActions = new LinkedList<>();
+    private volatile Queue<String> guiActions = new LinkedList<>();
 
     public static final Scanner scanner = new Scanner(System.in);
 
@@ -36,11 +36,9 @@ public class MainController {
                 Main.gui.playerDied();
         } else {
             Main.gui.startBattle();
-            System.out.println(guiActions);
             while (guiActions.isEmpty());
             String action = guiActions.remove();
             if (action.equals("fight") || action.equals("run") && !Battle.run()) {
-                System.out.println("here");
                 Main.gui.battleInfoFrame();
                 isHeroWon = Battle.startBattle(villain);
             }
@@ -50,7 +48,7 @@ public class MainController {
         return isHeroWon;
     }
 
-    public static MoveDirection pickMovement() {
+    public MoveDirection pickMovement() {
         Hero hero = Hero.getHero();
         String userInput;
         if (!Main.gui.isGui()) {
@@ -61,7 +59,7 @@ public class MainController {
             userInput = guiActions.remove();
         }
         MoveDirection direction = MoveDirection.NULL;
-        Game.setHeroLastPos(hero.getCoordinates());
+        Main.game.setHeroLastPos(hero.getCoordinates());
         if (userInput.startsWith("r") && ((hero.getCoordinates().getX() + 1) < Map.getMap().getSize())) {
             hero.moveRight();
             direction = MoveDirection.EAST;
@@ -83,7 +81,8 @@ public class MainController {
         } else if (userInput.startsWith("d")) {
             direction = MoveDirection.BORDER;
         } else if (userInput.startsWith("i")) {
-            Main.gui.info(hero);
+            if (!Main.gui.isGui())
+                Main.gui.info(hero);
         }
         return direction;
     }
@@ -98,9 +97,7 @@ public class MainController {
             }
         } else {
             Main.gui.drawMenu();
-            System.out.println("before draw menu");
             while (guiActions.isEmpty());
-            System.out.println("after draw menu");
             return heroPickCondition(guiActions.remove());
         }
     }
@@ -179,12 +176,24 @@ public class MainController {
         } else {
             Main.gui.pickPrize(prizeName);
             while (guiActions.isEmpty());
-            String userInput = MainController.guiActions.remove();
+            String userInput = guiActions.remove();
             return userInput.equals("yes");
         }
     }
 
-    public static void enterForContinue() {
+    public synchronized void addAction(String action) {
+        this.guiActions.add(action);
+    }
+
+    public synchronized Queue<String> getGuiActions() {
+        return guiActions;
+    }
+
+    public synchronized void setGuiActions(Queue<String> guiActions) {
+        this.guiActions = guiActions;
+    }
+
+    public void enterForContinue() {
         Main.gui.printMessage("\n\nPRESS [ENTER] TO CONTINUE..", false);
         try { System.in.read(); } catch(Exception e) {}
     }

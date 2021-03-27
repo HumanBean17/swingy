@@ -1,6 +1,7 @@
 package com.swingy.view;
 
 import com.swingy.Game;
+import com.swingy.Main;
 import com.swingy.controller.MainController;
 import com.swingy.map.Map;
 import com.swingy.model.cclasses.CharacterClass;
@@ -62,26 +63,27 @@ public class TermGui implements Gui {
 
     public void battleLost(Villain villain) {
         this.printMessage("Villain has " + villain.getHp() + " health points", true);
-         MainController.enterForContinue();
+         Main.controller.enterForContinue();
     }
 
     public void battleWin() {
         this.printMessage("You've won the battle!", true);
-         MainController.enterForContinue();
+         Main.controller.enterForContinue();
     }
 
     public void printErrorMessage(String message, boolean flush) {
         this.printMessage(message, true);
+        Main.controller.enterForContinue();
     }
 
     public void levelUpMessage() {
-        this.printMessage("Level up! You're now level " + ((Hero.getHero().getLevel()) + 1), true);
-         MainController.enterForContinue();
+        this.printMessage("Level up! You're now level " + ((Hero.getHero().getLevel() + 1)), true);
+         Main.controller.enterForContinue();
     }
 
     public void gameFinishedMessage() {
         this.printMessage("Congratulations! You've reached game level 7 and completed the game.", true);
-        MainController.enterForContinue();
+        Main.controller.enterForContinue();
     }
 
     public void startBattle() {
@@ -89,8 +91,8 @@ public class TermGui implements Gui {
     }
 
     public void playerDied() {
-        this.printMessage("YOU DIED. GAME OVER ON LEVEL " + (Hero.getHero().getLevel() + 1), true);
-        MainController.enterForContinue();
+        this.printMessage("YOU DIED. GAME OVER ON LEVEL " + (Hero.getHero().getLevel()), true);
+        Main.controller.enterForContinue();
     }
 
     public void pickMovement() {
@@ -118,7 +120,7 @@ public class TermGui implements Gui {
         this.printMessage("CLASS:               " + hero.getCharacterClass().getGameClass() + "\n", false);
         this.printMessage("HEALTH POINTS:       " + hero.getHp() + "/" + Hero.getHero().getMaxHp() + "\n", false);
         this.printMessage("LEVEL:               " + hero.getLevel() + "\n", false);
-        this.printMessage("EXPERIENCE:          " + hero.getExperience() + "/" + Game.getNextLevelExperience() + "\n", false);
+        this.printMessage("EXPERIENCE:          " + hero.getExperience() + "/" + Main.game.getNextLevelExperience() + "\n", false);
         this.printMessage("ATTACK:              " + hero.getAttack() + "\n", false);
         this.printMessage("DEFENCE:             " + hero.getDefense() + "\n", false);
         this.printMessage("HIT POINTS:          " + hero.getHitPoints() + "\n", false);
@@ -128,7 +130,7 @@ public class TermGui implements Gui {
             this.printMessage("ARMOR:           " + hero.getArmor().getName() + "\n", false);
         if (hero.getHelm() != null)
             this.printMessage("HELMET:          " + hero.getHelm().getName() + "\n", false);
-        MainController.enterForContinue();
+        Main.controller.enterForContinue();
     }
 
     public void pickClass() {
@@ -160,7 +162,7 @@ public class TermGui implements Gui {
                           + "      .----)   |      \\    /\\    /    |  | |  |\\   | |  |__| |    |  |           \n"
                           + "      |_______/        \\__/  \\__/     |__| |__| \\__|  \\______|    |__|          \n",
                 false);
-        MainController.enterForContinue();
+        Main.controller.enterForContinue();
     }
 
     public void writeMap() {
